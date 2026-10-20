@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-10-20",
+  "angle": "overall impact",
+  "person": {
+    "name": "Alex Example",
+    "firstName": "Alex",
+    "email": "alex@example.com",
+    "title": "Senior Product Designer",
+    "team": "Admin Experience",
+    "discipline": "design"
+  },
+  "hero": {
+    "line": { "text": "Turns messy admin workflows into tools people actually enjoy.", "confidence": "embellished", "note": "Positioning line synthesized from project outcomes." },
+    "kicker": "Portfolio · 2025–2026",
+    "bio": { "text": "Alex designs and prototypes admin tooling end to end, from discovery to live Vibelab prototypes used in customer calls.", "confidence": "inferred", "sources": [{ "url": "https://example.com/doc", "type": "glean" }] }
+  },
+  "impact": [
+    { "value": "6", "label": "live prototypes shipped", "confidence": "sourced", "sources": [{ "url": "https://example.com/vibelab", "type": "vibelab" }] },
+    { "value": "~20%", "label": "faster bulk actions", "confidence": "inferred", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
+    { "value": "3", "label": "teams adopted the patterns", "confidence": "sourced", "sources": [{ "url": "https://example.com/slack", "type": "slack" }] }
+  ],
+  "projects": [
+    {
+      "slug": "bulk-actions",
+      "title": { "text": "Made bulk board management a two-click job", "confidence": "inferred", "sources": [{ "url": "https://example.com/epic", "type": "jira" }] },
+      "summary": { "text": "A rebuilt boards table with bulk actions, prototyped live and validated with enterprise admins.", "confidence": "sourced", "sources": [{ "url": "https://example.com/epic", "type": "jira" }] },
+      "period": { "start": "2026-03-01", "end": "2026-07-15" },
+      "team": "Admin Experience",
+      "collaborators": ["Sam PM", "Riley Eng"],
+      "context": { "text": "Admins managed hundreds of boards one at a time.", "confidence": "sourced", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
+      "challenge": { "text": "Keep power-user speed without making the table intimidating.", "confidence": "inferred", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
+      "role": { "text": "Led design and built the working prototype used in customer sessions.", "confidence": "embellished", "note": "Upgraded from 'designed and prototyped'; prototype commits support lead role." },
+      "moves": [
+        { "text": "Mapped the top admin jobs from support tickets.", "confidence": "sourced", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
+        { "text": "Prototyped on real data shapes in Vibelab instead of static mocks.", "confidence": "sourced", "sources": [{ "url": "https://example.com/vibelab", "type": "vibelab" }] },
+        { "text": "Ran five customer sessions with the live prototype.", "confidence": "inferred", "sources": [{ "url": "https://example.com/notes", "type": "glean" }] }
+      ],
+      "outcome": { "text": "The pattern shipped to the admin console and became the table standard.", "confidence": "inferred", "sources": [{ "url": "https://example.com/slack", "type": "slack" }] },
+      "impact": [
+        { "value": "~20%", "label": "faster task completion in tests", "confidence": "inferred", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
+        { "text": "Adopted by two neighbouring teams.", "confidence": "sourced", "sources": [{ "url": "https://example.com/slack", "type": "slack" }] }
+      ],
+      "media": [],
+      "proof": [],
+      "vibelab": { "app": "bulk-actions", "liveUrl": "https://example.com/vibelab", "commits": 31, "localDoc": "projects/bulk-actions/RUN-LOCALLY.md", "smoke": "works" }
+    }
+  ],
+  "testimonials": [
+    { "quote": "This prototype answered more questions in one call than a month of specs.", "author": "Sam PM", "role": "Product Manager", "url": "https://example.com/slack" }
+  ],
+  "timeline": [
+    { "date": "2026-03-01", "label": "Kicked off bulk actions discovery", "project": "bulk-actions" },
+    { "date": "2026-07-15", "label": "Pattern shipped to admin console", "project": "bulk-actions" }
+  ],
+  "skills": [{ "name": "Interaction design" }, { "name": "React prototyping" }, { "name": "Research synthesis" }],
+  "design": { "concept": "Neutral baseline (replace per run)" }
+}

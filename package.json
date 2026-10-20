@@ -1,0 +1,15 @@
+{
+  "name": "brag-center",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent skill that builds a bespoke portfolio site for an employee from connected sources.",
+  "type": "module",
+  "scripts": {
+    "check": "bash scripts/check-env.sh",
+    "validate": "node scripts/validate-story.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "playwright": "^1.56.0"
+  }
+}

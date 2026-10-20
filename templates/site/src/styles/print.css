@@ -1,0 +1,78 @@
+/* Print contract used by scripts/export-pdf.mjs. Restyle freely, keep the selectors working. */
+
+[data-print-poster],
+.print-fn,
+.print-footnotes {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm 16mm;
+  }
+
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  [data-print="hide"],
+  dialog {
+    display: none !important;
+  }
+
+  [data-print="case-study"] {
+    break-before: page;
+  }
+
+  video {
+    display: none !important;
+  }
+
+  [data-print-poster] {
+    display: block !important;
+  }
+
+  figure,
+  img,
+  blockquote,
+  [data-print="keep"] {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  [data-print="proof"] {
+    break-before: auto;
+  }
+
+  .print-fn {
+    display: inline;
+    font-size: 0.65em;
+    vertical-align: super;
+    margin-left: 0.15em;
+  }
+
+  .print-footnotes {
+    display: block;
+    margin-top: 2rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid currentColor;
+    font-size: 8pt;
+    line-height: 1.4;
+    word-break: break-all;
+    opacity: 0.75;
+  }
+}

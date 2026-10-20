@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brag-center.local/story.schema.json",
+  "title": "Brag Center story",
+  "type": "object",
+  "required": ["person", "hero", "impact", "projects", "design"],
+  "additionalProperties": false,
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string" },
+        "type": { "enum": ["glean", "jira", "confluence", "slack", "figma", "miro", "vibelab", "github", "origin", "other"] },
+        "title": { "type": "string" },
+        "date": { "type": "string" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "required": ["text", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "confidence": { "enum": ["sourced", "inferred", "embellished"] },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+        "note": { "type": "string", "description": "Why it's inferred/embellished, or what was softened. Never rendered." },
+        "softened": { "type": "boolean", "description": "Confidential detail was generalized." }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "required": ["value", "label", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "string", "description": "Display value, e.g. '12', '~20%', '3x'" },
+        "label": { "type": "string" },
+        "confidence": { "enum": ["sourced", "inferred", "embellished"] },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+        "note": { "type": "string" },
+        "softened": { "type": "boolean" }
+      }
+    },
+    "media": {
+      "type": "object",
+      "required": ["src", "kind", "alt"],
+      "additionalProperties": false,
+      "properties": {
+        "src": { "type": "string", "description": "Path relative to site/public, e.g. media/hero-standup.mp4" },
+        "kind": { "enum": ["image", "video"] },
+        "poster": { "type": "string", "description": "Required for video" },
+        "webp": { "type": "string", "description": "Animated webp fallback for video" },
+        "alt": { "type": "string" },
+        "caption": { "type": "string" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "role": { "enum": ["hero", "gallery", "detail"] }
+      },
+      "if": { "properties": { "kind": { "const": "video" } } },
+      "then": { "required": ["poster"] }
+    },
+    "proof": {
+      "type": "object",
+      "required": ["src", "source", "caption"],
+      "additionalProperties": false,
+      "properties": {
+        "src": { "type": "string" },
+        "source": { "enum": ["jira", "confluence", "figma", "miro", "vibelab", "github", "origin", "slack", "glean", "other"] },
+        "caption": { "type": "string" },
+        "url": { "type": "string" },
+        "width": { "type": "integer" },
+        "height": { "type": "integer" },
+        "sensitive": { "type": "boolean", "description": "Flag for REVIEW.md; consider blurring or dropping" }
+      }
+    },
+    "project": {
+      "type": "object",
+      "required": ["slug", "title", "summary", "period", "context", "challenge", "role", "moves", "outcome", "impact", "proof"],
+      "additionalProperties": false,
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "title": { "$ref": "#/$defs/claim" },
+        "summary": { "$ref": "#/$defs/claim" },
+        "period": {
+          "type": "object",
+          "required": ["start"],
+          "properties": { "start": { "type": "string" }, "end": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "team": { "type": "string" },
+        "collaborators": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "context": { "$ref": "#/$defs/claim" },
+        "challenge": { "$ref": "#/$defs/claim" },
+        "role": { "$ref": "#/$defs/claim" },
+        "moves": { "type": "array", "minItems": 2, "maxItems": 6, "items": { "$ref": "#/$defs/claim" } },
+        "outcome": { "$ref": "#/$defs/claim" },
+        "impact": { "type": "array", "minItems": 1, "items": { "anyOf": [{ "$ref": "#/$defs/metric" }, { "$ref": "#/$defs/claim" }] } },
+        "media": { "type": "array", "items": { "$ref": "#/$defs/media" } },
+        "proof": { "type": "array", "items": { "$ref": "#/$defs/proof" } },
+        "vibelab": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "app": { "type": "string" },
+            "liveUrl": { "type": "string" },
+            "repo": { "type": "string" },
+            "commits": { "type": "integer" },
+            "localDoc": { "type": "string", "description": "Relative path, e.g. projects/<app>/RUN-LOCALLY.md" },
+            "smoke": { "enum": ["works", "needs-secrets", "broken", "skipped"] }
+          }
+        },
+        "figma": { "type": "array", "items": { "type": "string" }, "description": "Figma file/frame URLs" },
+        "miro": { "type": "array", "items": { "type": "string" }, "description": "Miro board URLs" }
+      }
+    }
+  },
+  "properties": {
+    "generatedAt": { "type": "string" },
+    "angle": { "type": "string" },
+    "window": { "type": "object", "properties": { "start": { "type": "string" }, "end": { "type": "string" } }, "additionalProperties": false },
+    "person": {
+      "type": "object",
+      "required": ["name", "email", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "firstName": { "type": "string" },
+        "email": { "type": "string" },
+        "title": { "type": "string" },
+        "team": { "type": "string" },
+        "department": { "type": "string" },
+        "location": { "type": "string" },
+        "startDate": { "type": "string" },
+        "discipline": { "enum": ["engineering", "design", "product", "data", "research", "marketing", "ops", "other"] },
+        "links": { "type": "array", "items": { "type": "object", "properties": { "label": { "type": "string" }, "url": { "type": "string" } }, "required": ["label", "url"], "additionalProperties": false } }
+      }
+    },
+    "hero": {
+      "type": "object",
+      "required": ["line"],
+      "additionalProperties": false,
+      "properties": {
+        "line": { "$ref": "#/$defs/claim" },
+        "kicker": { "type": "string" },
+        "bio": { "$ref": "#/$defs/claim" },
+        "media": { "$ref": "#/$defs/media" }
+      }
+    },
+    "impact": { "type": "array", "minItems": 2, "maxItems": 6, "items": { "$ref": "#/$defs/metric" } },
+    "projects": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/project" } },
+    "testimonials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["quote", "author", "url"],
+        "additionalProperties": false,
+        "properties": {
+          "quote": { "type": "string", "maxLength": 400 },
+          "author": { "type": "string" },
+          "role": { "type": "string" },
+          "url": { "type": "string" },
+          "date": { "type": "string" },
+          "project": { "type": "string", "description": "Project slug" }
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "date": { "type": "string" },
+          "label": { "type": "string" },
+          "project": { "type": "string" },
+          "confidence": { "enum": ["sourced", "inferred", "embellished"] },
+          "url": { "type": "string" }
+        }
+      }
+    },
+    "skills": { "type": "array", "items": { "type": "object", "required": ["name"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "evidence": { "type": "string" } } } },
+    "design": {
+      "type": "object",
+      "required": ["concept"],
+      "additionalProperties": true,
+      "description": "Mirror of key DESIGN.md decisions so the site can read tokens.",
+      "properties": {
+        "concept": { "type": "string" },
+        "reference": { "type": "string" },
+        "palette": { "type": "object", "additionalProperties": { "type": "string" } },
+        "fonts": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "missingSources": { "type": "array", "items": { "type": "string" } }
+  }
+}
