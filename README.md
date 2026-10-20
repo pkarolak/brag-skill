@@ -1,6 +1,8 @@
-# brag-center
+# Brag Center
 
 An agent skill that turns an employee's email into a bespoke, local portfolio site of case studies, built from the sources your agent is already connected to.
+
+**Landing page:** https://pkarolak.github.io/brag-skill/
 
 - **Evidence**: Glean, Vibelab, Jira, Confluence, Slack, Figma, GitHub / Origin, Miro
 - **Story**: 3-6 outcome-first case studies, an impact strip, real testimonials, a timeline. Flattering framing, with every claim tagged `sourced` / `inferred` / `embellished` in a private review file.
@@ -12,10 +14,11 @@ An agent skill that turns an employee's email into a bespoke, local portfolio si
 ## Install
 
 ```bash
-npx skills add <org>/brag-center
-# or clone it into your skills folder:
-git clone <repo-url> ~/.cursor/skills/brag-center
+npx skills add pkarolak/brag-skill            # project-level
+npx skills add pkarolak/brag-skill -g         # global, for every project
 ```
+
+The CLI detects your agent (Cursor, Claude Code, Codex, Gemini CLI, …) and links `skills/brag-center` into its skills folder. Manual alternative: clone this repo and symlink `skills/brag-center` into `~/.cursor/skills/` (or your agent's equivalent).
 
 On first run the skill's preflight installs what it needs: Playwright + Chromium (inside the skill folder), ffmpeg (via Homebrew), and tasteskill (`npx skills add Leonxlnx/taste-skill --skill design-taste-frontend`).
 
@@ -23,7 +26,7 @@ Recommended connections: Glean, Atlassian, Slack, Figma, and Miro MCPs; `gh auth
 
 ## Use
 
-In your agent (Cursor, Claude Code, Codex, …):
+In your agent:
 
 ```
 brag center for jane.doe@miro.com
@@ -47,6 +50,8 @@ brag-jane-20261020/
 
 ## Scripts (run by the skill; usable on their own)
 
+Paths are relative to `skills/brag-center/`.
+
 | Script | What it does |
 |--------|--------------|
 | `scripts/check-env.sh` | Preflight + installs |
@@ -68,11 +73,16 @@ brag-jane-20261020/
 - Copying Miro content to a personal account or another org requires explicit confirmation.
 - Vibelab isn't approved for Restricted data. The skill publishes only with the subject's consent, unlisted, and with sensitive metrics stripped.
 
-## Layout
+## Repo layout
 
 ```
-SKILL.md                 workflow (the agent reads this)
-reference/               sources, storytelling, art direction, build, vibelab, figma, exports
-templates/               story.schema.json, example.story.json, RUN-LOCALLY.md, REVIEW.md, site/
-scripts/                 helpers listed above
+skills/brag-center/      the skill (what `npx skills add` installs)
+  SKILL.md               workflow (the agent reads this)
+  reference/             sources, storytelling, art direction, build, vibelab, figma, exports
+  templates/             story.schema.json, example.story.json, RUN-LOCALLY.md, REVIEW.md, site/
+  scripts/               helpers listed above
+web/                     landing page (Vite + React), deployed to GitHub Pages
+.github/workflows/       Pages deploy
 ```
+
+Work on the landing page with `cd web && npm install && npm run dev`.
