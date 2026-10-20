@@ -35,10 +35,11 @@ if [ -s "$TOKEN_FILE" ]; then
 else
   log "no Vibelab token; continuing from repo only"
 fi
-jget() { jq -r "$1 // empty" "$OUT/app.json" 2>/dev/null; }
+JSON="$SKILL_DIR/scripts/lib/json.mjs"
+jget() { node "$JSON" get "$OUT/app.json" "$@" 2>/dev/null; }
 
 if [ -z "$REPO" ]; then
-  REPO="$(jget '.repo_url // .repo' | sed -E 's#^https?://github.com/##; s#\.git$##')"
+  REPO="$(jget .repo_url .repo | sed -E 's#^https?://github.com/##; s#\.git$##')"
 fi
 if [ -z "$REPO" ]; then
   for org in ${VIBELAB_ORGS//,/ } miroapp-vibe miroapp-dev; do
@@ -72,8 +73,8 @@ PKG="$APPDIR/package.json"
 
 # 3. Analyze
 has_file() { [ -f "$APPDIR/$1" ]; }
-pkg() { [ -f "$PKG" ] && jq -r "$1 // empty" "$PKG" 2>/dev/null; }
-dep() { [ -f "$PKG" ] && jq -e --arg d "$1" '(.dependencies // {}) + (.devDependencies // {}) | has($d)' "$PKG" >/dev/null 2>&1; }
+pkg() { [ -f "$PKG" ] && node "$JSON" get "$PKG" "$1" 2>/dev/null; }
+dep() { [ -f "$PKG" ] && node "$JSON" has-dep "$PKG" "$1" 2>/dev/null; }
 grep_src() { grep -rIlE "$1" "$APPDIR" --include='*.ts' --include='*.tsx' --include='*.js' --include='*.mjs' --include='*.cjs' --include='*.jsx' --include='*.py' --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.next 2>/dev/null | head -5; }
 
 PM=npm
@@ -217,26 +218,13 @@ if [ -n "$MODE" ]; then
 fi
 
 # facts.json
-jq -n \
-  --arg app "$APP" --arg repo "$REPO" --arg liveUrl "$LIVE_URL" --arg status "$STATUS" \
-  --arg framework "$FRAMEWORK" --arg pm "$PM" --arg type "$APP_TYPE" --arg rootDir "$ROOT_DIR" \
-  --arg build "$BUILD_CMD" --arg start "$START_CMD" --arg outDir "$OUT_DIR" \
-  --arg envKeys "$ENV_KEYS" --arg sqlite "$USES_SQLITE" --arg portEnv "$USES_PORT_ENV" \
-  --arg aiProxy "$USES_AI_PROXY" --arg internalPkgs "$USES_INTERNAL_PKGS" \
-  --arg hardcoded "$HARDCODED_VIBELAB" --arg headers "$VIBELAB_HEADERS" \
-  --argjson commits "${C_TOTAL:-0}" --argjson subjectCommits "${C_SUBJECT:-0}" \
-  --arg first "$C_FIRST" --arg last "$C_LAST" --arg readme "$README_SUMMARY" --arg smoke "$SMOKE" \
-  --rawfile top "$OUT/commits-top.txt" '
-  { app: $app, repo: $repo, liveUrl: $liveUrl, vibelabStatus: $status, framework: $framework,
-    packageManager: $pm, type: $type, rootDir: $rootDir, build: $build, start: $start, outDir: $outDir,
-    envKeys: ($envKeys | split(" ") | map(select(length>0))),
-    usesSqlite: ($sqlite=="yes"), readsPortEnv: ($portEnv=="yes"), aiProxy: $aiProxy,
-    internalPackages: ($internalPkgs=="yes"),
-    hardcodedVibelabUrls: ($hardcoded | split(" ") | map(select(length>0))),
-    vibelabIdentityHeaders: ($headers | split(" ") | map(select(length>0))),
-    commits: { total: $commits, bySubject: $subjectCommits, first: $first, last: $last,
-               top: ($top | split("\n") | map(select(length>0))) },
-    readmeSummary: $readme, smoke: $smoke, localDoc: ("projects/" + $app + "/RUN-LOCALLY.md") }' > "$OUT/facts.json"
+F_APP="$APP" F_REPO="$REPO" F_LIVE_URL="$LIVE_URL" F_STATUS="$STATUS" F_FRAMEWORK="$FRAMEWORK" F_PM="$PM" \
+F_TYPE="$APP_TYPE" F_ROOT_DIR="$ROOT_DIR" F_BUILD="$BUILD_CMD" F_START="$START_CMD" F_OUT_DIR="$OUT_DIR" \
+F_ENV_KEYS="$ENV_KEYS" F_SQLITE="$USES_SQLITE" F_PORT_ENV="$USES_PORT_ENV" F_AI_PROXY="$USES_AI_PROXY" \
+F_INTERNAL_PKGS="$USES_INTERNAL_PKGS" F_HARDCODED="$HARDCODED_VIBELAB" F_HEADERS="$VIBELAB_HEADERS" \
+F_COMMITS="${C_TOTAL:-0}" F_SUBJECT_COMMITS="${C_SUBJECT:-0}" F_FIRST="$C_FIRST" F_LAST="$C_LAST" \
+F_README="$README_SUMMARY" F_SMOKE="$SMOKE" \
+node "$JSON" facts "$OUT/commits-top.txt" > "$OUT/facts.json"
 
 # RUN-LOCALLY.md
 PREREQS="- Node.js 20+"

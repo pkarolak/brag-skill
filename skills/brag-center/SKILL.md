@@ -33,10 +33,16 @@ Copy and track:
 ## 1. Preflight
 
 ```bash
-bash "$SKILL_DIR/scripts/check-env.sh"
+bash "$SKILL_DIR/scripts/check-env.sh" --agent <cursor|claude-code|codex|gemini-cli|other>   # pass the harness you are running in
 ```
 
-Installs Playwright (into `SKILL_DIR`), ffmpeg, and tasteskill if missing. Then call `GetDynamicTools` with no args and note which namespaces are live: Glean, Atlassian, Slack, Figma, Miro, Origin. Missing sources are skipped and listed in `REVIEW.md`; never block on one. Vibelab needs VPN (`warp-cli status`) and `~/.config/vibelab/token` (created by the vibelab skill's preflight).
+Check-only: the one thing it installs is the skill's own npm packages (`playwright-core`, `ajv`, ~16 MB inside `SKILL_DIR`). It never uses Homebrew. Read the `KEY=VALUE` lines at the end and pick defaults from what this agent and machine already have:
+
+- `BROWSER=chrome|msedge|…`: scripts drive that browser; nothing to download. `BROWSER=none`: ask once — install Chrome, or rerun with `--install browser` (Playwright Chromium, ~300 MB). If declined, take screenshots and review shots with `AGENT_BROWSER_TOOL` and skip loops and PDF.
+- `TASTESKILL=<path>`: use it. `none`: ask once whether to add it for this agent (`--install taste`, global skill); if declined, use the fallback checklist in [reference/art-direction.md](reference/art-direction.md).
+- `FFMPEG=no` is fine (loops stay webm). `GH` not `ok`: skip Vibelab clones and code harvest and log it.
+
+Ask both questions (browser, tasteskill) in one `AskQuestion`, only for what's missing. Then call `GetDynamicTools` with no args and note which namespaces are live: Glean, Atlassian, Slack, Figma, Miro, Origin. Missing sources are skipped and listed in `REVIEW.md`; never block on one. Vibelab needs VPN (`warp-cli status`) and `~/.config/vibelab/token` (created by the vibelab skill's preflight).
 
 ## 2. Intake
 
@@ -104,8 +110,10 @@ Read [reference/exports.md](reference/exports.md) (proof section). Build `media-
 ```bash
 node "$SKILL_DIR/scripts/capture.mjs" --login            # once, if any source needs SSO; user signs in, then closes the window
 node "$SKILL_DIR/scripts/capture.mjs" media-jobs.json --out site/public/media
-bash "$SKILL_DIR/scripts/to-loop.sh" site/public/media/*.webm
+bash "$SKILL_DIR/scripts/to-loop.sh" site/public/media/*.webm   # only if FFMPEG=yes
 ```
+
+Video jobs write `<id>.webm` + `<id>.jpg` poster. With ffmpeg, use the trimmed `<id>.mp4`. Without it, reference the webm and set `start`/`end` on the media item from `<id>.webm.json` (`start = trimStart`, `end = trimStart + duration`) so the loop skips the page load.
 
 - Hero loops: Vibelab live URL first; if down or behind auth, the local clone (`vibelab-localize.sh <app> <run> --serve` prints a URL).
 - Proof shots: every source URL attached to a project (Confluence, Jira, Figma, Miro, Vibelab). Miro areas: `canvas_read_as_svg` → save `.svg` → `capture.mjs --svg file.svg`.
@@ -117,7 +125,7 @@ Read [reference/art-direction.md](reference/art-direction.md). If a reference wa
 
 ## 8. Build
 
-1. Read tasteskill's skill file before touching UI (path printed by `check-env.sh`, typically `~/.agents/skills/design-taste-frontend/SKILL.md` or `~/.cursor/skills/design-taste-frontend/SKILL.md`). Follow it together with `DESIGN.md`.
+1. Read tasteskill's skill file (`TASTESKILL` from preflight) before touching UI and follow it together with `DESIGN.md`. If `TASTESKILL=none`, use the fallback checklist in [reference/art-direction.md](reference/art-direction.md).
 2. Scaffold: `bash "$SKILL_DIR/scripts/scaffold-site.sh" "<run-dir>"`.
 3. Build the site per [reference/build.md](reference/build.md): all content from `story.json`, bespoke sections, proof gallery on each case study, print stylesheet kept intact.
 
@@ -128,7 +136,7 @@ cd site && npm run dev -- --port 5180 &      # leave running
 node "$SKILL_DIR/scripts/capture.mjs" --review http://localhost:5180 --out ../review
 ```
 
-Look at `review/*.png` (desktop + mobile, every route). Run tasteskill's pre-flight checklist honestly. Fix and repeat. Stop after 3 rounds; log leftovers in `REVIEW.md`.
+Look at `review/*.png` (desktop + mobile, every route). Run tasteskill's pre-flight checklist (or the fallback checklist) honestly. Fix and repeat. Stop after 3 rounds; log leftovers in `REVIEW.md`.
 
 ## 10. Handoff + extras
 

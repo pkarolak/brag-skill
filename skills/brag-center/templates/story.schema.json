@@ -47,9 +47,11 @@
       "required": ["src", "kind", "alt"],
       "additionalProperties": false,
       "properties": {
-        "src": { "type": "string", "description": "Path relative to site/public, e.g. media/hero-standup.mp4" },
+        "src": { "type": "string", "description": "Path relative to site/public, e.g. media/hero-standup.webm (or .mp4 after to-loop.sh)" },
         "kind": { "enum": ["image", "video"] },
         "poster": { "type": "string", "description": "Required for video" },
+        "start": { "type": "number", "minimum": 0, "description": "Loop start in seconds for untrimmed webm (trimStart from <id>.webm.json); omit for to-loop.sh mp4s" },
+        "end": { "type": "number", "exclusiveMinimum": 0, "description": "Loop end in seconds (start + duration)" },
         "webp": { "type": "string", "description": "Animated webp fallback for video" },
         "alt": { "type": "string" },
         "caption": { "type": "string" },

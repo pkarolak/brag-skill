@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Playwright capture tool for brag-center.
+// Playwright capture tool for brag-center. Uses installed Chrome/Edge (see lib/browser.mjs).
+// Video jobs write <id>.webm plus an <id>.jpg poster; to-loop.sh (ffmpeg) is optional.
 //
 //   node capture.mjs <jobs.json> --out <dir> [--profile <dir>] [--only id1,id2]
 //   node capture.mjs --login [url ...]                     headed browser to sign in once (persistent profile)
@@ -12,7 +13,7 @@
 //     "fullPage": false, "selector": ".clip-to-this", "hide": [".cookie"], "blur": [".private"],
 //     "duration": 8, "scroll": true, "actions": [{ "click": "sel" }, { "hover": "sel" },
 //     { "type": ["sel", "text"] }, { "wait": 800 }, { "scrollTo": "sel" }, { "press": "Enter" }] }
-import { chromium } from "playwright";
+import { launch as launchBrowser, launchPersistent } from "./lib/browser.mjs";
 import { mkdirSync, readFileSync, renameSync, writeFileSync, existsSync, rmSync } from "node:fs";
 import { basename, extname, join, resolve } from "node:path";
 import { homedir, tmpdir } from "node:os";
@@ -45,10 +46,10 @@ async function launch({ auth, viewport = [1440, 900], scale = 2, video }) {
   };
   if (auth) {
     mkdirSync(PROFILE, { recursive: true });
-    const context = await chromium.launchPersistentContext(PROFILE, { headless: true, ...contextOpts });
+    const context = await launchPersistent(PROFILE, contextOpts);
     return { context, close: () => context.close() };
   }
-  const browser = await chromium.launch({ headless: true });
+  const browser = await launchBrowser();
   const context = await browser.newContext(contextOpts);
   return { context, close: async () => { await context.close(); await browser.close(); } };
 }
@@ -128,6 +129,7 @@ async function videoJob(job) {
     await settle(page, job);
     trimStart = (Date.now() - started) / 1000;
     await sleep(1200);
+    await page.screenshot({ path: join(OUT, `${job.id}.jpg`), type: "jpeg", quality: 82 }).catch(() => {});
     await runActions(page, job.actions);
     if (job.scroll !== false) await smoothScroll(page, job.duration ?? 8);
     else await sleep((job.duration ?? 6) * 1000);
@@ -140,7 +142,7 @@ async function videoJob(job) {
       renameSync(src, file);
       writeFileSync(join(OUT, `${job.id}.webm.json`), JSON.stringify({ trimStart: Math.max(0, trimStart - 0.2), duration: job.duration ?? 8 }));
       rmSync(tmp, { recursive: true, force: true });
-      return { id: job.id, file, trimStart };
+      return { id: job.id, file, poster: join(OUT, `${job.id}.jpg`), trimStart };
     }
   }
   return { id: job.id, error: "no video produced" };
@@ -170,7 +172,7 @@ async function runJobs(path) {
 
 async function login(urls) {
   mkdirSync(PROFILE, { recursive: true });
-  const context = await chromium.launchPersistentContext(PROFILE, { headless: false, viewport: null });
+  const context = await launchPersistent(PROFILE, { headless: false, viewport: null });
   const targets = urls.length ? urls : [
     "https://vibelab.miro.tools/",
     "https://miro.atlassian.net/",
@@ -255,7 +257,7 @@ function normalizeComposerSvg(maxWidth) {
 
 async function renderSvgs(files) {
   mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch({ headless: true });
+  const browser = await launchBrowser();
   const page = await browser.newPage({ deviceScaleFactor: 2, viewport: { width: 2400, height: 1600 } });
   const out = [];
   for (const f of files) {
@@ -278,7 +280,7 @@ async function renderSvgs(files) {
 
 async function review(siteUrl) {
   mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch({ headless: true });
+  const browser = await launchBrowser();
   const base = siteUrl.replace(/#.*$/, "");
   const probe = await browser.newPage();
   await probe.goto(base, { waitUntil: "networkidle" });

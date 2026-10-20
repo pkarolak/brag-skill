@@ -5,7 +5,7 @@
 //
 // Loads <siteUrl>?print=1[&project=<slug>], waits for window.__printReady (set by the site's print.ts),
 // emulates print media, and writes a PDF with backgrounds.
-import { chromium } from "playwright";
+import { launch } from "./lib/browser.mjs";
 import { mkdirSync, statSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
@@ -28,7 +28,7 @@ url.hash = "";
 url.searchParams.set("print", "1");
 if (project) url.searchParams.set("project", project);
 
-const browser = await chromium.launch({ headless: true });
+const browser = await launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 1800 }, deviceScaleFactor: 2 });
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));

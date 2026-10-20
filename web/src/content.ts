@@ -143,7 +143,7 @@ export const steps: Step[] = [
   {
     title: "Media",
     body: "Live apps are recorded as loops, sources become proof screenshots, Figma frames come down at 2x.",
-    log: ["capture media-jobs.json", "  ✓ hero-bulk-actions.webm", "  ✓ proof-epic-ADM-412.png", "to-loop → mp4 + poster"],
+    log: ["capture media-jobs.json  (your Chrome)", "  ✓ hero-bulk-actions.webm + poster", "  ✓ proof-epic-ADM-412.png", "  ✓ figma-bulk-select@2x.png"],
   },
   {
     title: "Direction",

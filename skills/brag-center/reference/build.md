@@ -31,7 +31,7 @@ Home (`#/`):
 
 Case study (`#/work/<slug>`):
 - Title, one-line summary, meta (dates, role, team, collaborators)
-- Hero media (loop mp4 with poster, `autoplay muted loop playsInline`)
+- Hero media (loop webm or mp4 with poster, `autoplay muted playsInline`; `Media` handles `start`/`end` for untrimmed webm)
 - Context → Challenge → Role → Moves → Outcome → Impact, laid out with rhythm (not one long text column unless that's the concept)
 - Media gallery (`media[]`)
 - **Proof gallery** (`proof[]`): grid of real-artifact screenshots; each with source type label (Jira, Confluence, Figma, Miro, Vibelab, GitHub), caption, link. Lightbox on click. `data-print="proof"` on the section.

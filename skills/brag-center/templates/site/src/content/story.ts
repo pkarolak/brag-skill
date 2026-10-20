@@ -8,6 +8,8 @@ export type MediaItem = {
   kind: "image" | "video";
   poster?: string;
   webp?: string;
+  start?: number;
+  end?: number;
   alt: string;
   caption?: string;
   width?: number;

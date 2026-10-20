@@ -17,7 +17,6 @@ done
 VURL="${VIBELAB_URL:-https://vibelab.miro.tools}"
 TOKEN_FILE="$HOME/.config/vibelab/token"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
-LOCAL="${EMAIL%@*}"
 echo '[]' > "$TMP/apps.json"
 
 # 1. Vibelab app records
@@ -25,8 +24,8 @@ if [ -s "$TOKEN_FILE" ]; then
   code="$(curl -s -o "$TMP/raw.json" -w '%{http_code}' --connect-timeout 10 --max-time 30 \
     -H "Authorization: Bearer $(cat "$TOKEN_FILE")" "$VURL/vlapi/apps" || echo 000)"
   if [ "$code" = 200 ]; then
-    jq 'if type=="object" and has("apps") then .apps else . end' "$TMP/raw.json" > "$TMP/apps.json"
-    echo "vibelab: $(jq length "$TMP/apps.json") app records visible" >&2
+    cp "$TMP/raw.json" "$TMP/apps.json"
+    echo "vibelab: app records fetched" >&2
   else
     echo "vibelab: GET /vlapi/apps returned $code (401/403 → run vibelab preflight; 000 → connect WARP). Falling back to GitHub only." >&2
   fi
@@ -67,34 +66,5 @@ else
   echo "github: gh not authenticated; skipping commit matching" >&2
 fi
 
-jq -R -s 'split("\n") | map(select(length>0) | split("\t") | {repo: .[0], commits: (.[1]|tonumber)})' \
-  "$TMP/repo-counts.tsv" > "$TMP/repos.json"
-
 # 3. Merge
-jq -n --arg email "$EMAIL" --arg local "$LOCAL" --arg vurl "$VURL" \
-  --slurpfile apps "$TMP/apps.json" --slurpfile repos "$TMP/repos.json" '
-  def lc: ascii_downcase;
-  def owner_strings: [ .owner, .owner_email, .created_by, .createdBy, .author, .user.email?, .user.login?, .owner.email?, .owner.login? ]
-    | map(select(type=="string")) | map(lc);
-  def app_repo: ((.repo_url // .repo // "") | sub("^https?://github.com/"; "") | sub("\\.git$"; ""));
-  def short: split("/") | last | sub("^vlab-"; "");
-  ($apps[0]) as $A | ($repos[0]) as $R |
-  ( $A | map(select(owner_strings | any(. == ($email|lc) or . == ($local|lc) or startswith(($local|lc) + "@"))))
-       | map({ name, url: (.url // ("https://" + .name + ".vibelab.miro.tools/")), status: (.status // "unknown"),
-               repo: app_repo, match: "owner", commits: 0 }) ) as $owned |
-  # miroapp-vibe repos are all Vibelab apps; elsewhere only vlab-* repos are, unless an app record confirms it.
-  def vibelab_repo: (startswith("miroapp-vibe/") or (split("/") | last | startswith("vlab-")));
-  ( $R | map(. as $r |
-      ( $A | map(select(app_repo == $r.repo or .name == ($r.repo|short))) | first ) as $app |
-      select($app != null or ($r.repo | vibelab_repo)) |
-      { name: ($app.name // ($r.repo|short)),
-        url: ($app.url // ("https://" + ($r.repo|short) + ".vibelab.miro.tools/")),
-        status: ($app.status // (if ($A|length)>0 then "no-app-record" else "unknown" end)),
-        repo: $r.repo, match: "commits", commits: $r.commits }) ) as $committed |
-  ($owned + $committed)
-  | group_by(.name)
-  | map(reduce .[] as $x ({}; . + $x + { match: ([.match, $x.match] | map(select(.)) | unique | join("+")),
-                                           commits: ([.commits // 0, $x.commits] | max) }))
-  | map(select(.status != "no-app-record" or .commits >= 3))
-  | sort_by(-.commits)
-'
+node "$(dirname "${BASH_SOURCE[0]}")/lib/vibelab-merge.mjs" "$TMP/apps.json" "$TMP/repo-counts.tsv" "$EMAIL" "$VURL"

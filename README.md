@@ -20,7 +20,20 @@ npx skills add pkarolak/brag-skill -g         # global, for every project
 
 The CLI detects your agent (Cursor, Claude Code, Codex, Gemini CLI, …) and links `skills/brag-center` into its skills folder. Manual alternative: clone this repo and symlink `skills/brag-center` into `~/.cursor/skills/` (or your agent's equivalent).
 
-On first run the skill's preflight installs what it needs: Playwright + Chromium (inside the skill folder), ffmpeg (via Homebrew), and tasteskill (`npx skills add Leonxlnx/taste-skill --skill design-taste-frontend`).
+### What it needs
+
+The preflight checks and reports. It doesn't use Homebrew or download browsers, and it installs nothing outside the skill folder unless you say yes.
+
+| | Needed? | Notes |
+|---|---|---|
+| Node 20+ | Required | |
+| `playwright-core`, `ajv` | Required | ~16 MB, installed inside the skill folder on first run |
+| Google Chrome or Edge | For screenshots, loops, PDF | Reuses the one you have. If neither is installed, it asks before downloading Playwright's Chromium (~300 MB), or falls back to the agent's own browser tool |
+| `gh` (signed in) | For Vibelab clones and code history | Skipped with a warning if missing |
+| tasteskill | Optional | Used if your agent already has it; otherwise the skill asks once and falls back to a built-in checklist |
+| ffmpeg | Optional | Converts loops to trimmed mp4 if present; webm + poster works without it |
+
+Defaults adapt to the agent running the skill (Cursor, Claude Code, Codex, Gemini CLI): which skills folder to look in for tasteskill, where to install it if you agree, and which built-in browser tool to fall back on.
 
 Recommended connections: Glean, Atlassian, Slack, Figma, and Miro MCPs; `gh auth login`; Cloudflare WARP plus the [vibelab skill](https://vibelab.miro.tools) preflight (it creates `~/.config/vibelab/token`). Missing sources are skipped and listed in the review file.
 
@@ -54,13 +67,13 @@ Paths are relative to `skills/brag-center/`.
 
 | Script | What it does |
 |--------|--------------|
-| `scripts/check-env.sh` | Preflight + installs |
+| `scripts/check-env.sh [--agent a] [--install browser,taste]` | Check-only preflight; opt-in installs |
 | `scripts/new-run.sh <first>` | Create the run folder |
 | `scripts/vibelab-apps.sh <email> [--login gh]` | Find a person's Vibelab apps (owner field, then commit authorship) |
 | `scripts/vibelab-localize.sh <app> <run> [--smoke\|--serve]` | Clone read-only, analyze, write `RUN-LOCALLY.md`, smoke-run |
 | `scripts/figma-fetch.mjs <spec> --run <run> [--publish]` | Download `download_assets` URLs, write the manifest |
 | `scripts/capture.mjs <jobs.json> --out <dir>` | Screenshots + scroll recordings (`--login` for SSO, `--svg` to render SVG, `--review` for QA shots) |
-| `scripts/to-loop.sh *.webm` | webm → mp4 loop + poster (+ webp if ffmpeg has libwebp) |
+| `scripts/to-loop.sh *.webm` | Optional, needs ffmpeg: webm → trimmed mp4 loop + poster |
 | `scripts/scaffold-site.sh <run> [--example]` | Create the site from `templates/site` |
 | `scripts/validate-story.mjs story.json` | Schema + claim-tag + media-file checks |
 | `scripts/export-pdf.mjs <url> [--project slug]` | PDF via the site's print stylesheet |

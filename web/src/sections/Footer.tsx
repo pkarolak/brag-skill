@@ -11,7 +11,7 @@ const cols: { title: string; items: { label: string; href?: string }[] }[] = [
     ],
   },
   { title: "Works with", items: [{ label: "Cursor" }, { label: "Claude Code" }, { label: "Codex" }, { label: "Gemini CLI" }] },
-  { title: "Needs", items: [{ label: "Node 20+" }, { label: "GitHub CLI" }, { label: "Your MCP connections" }, { label: "WARP for Vibelab" }] },
+  { title: "Needs", items: [{ label: "Node 20+" }, { label: "Chrome or Edge" }, { label: "GitHub CLI" }, { label: "Your MCP connections" }] },
   {
     title: "Made with",
     items: [

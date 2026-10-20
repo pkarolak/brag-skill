@@ -30,6 +30,19 @@ Twist with one personal element from the evidence: a color from their best proje
 - Purple-to-blue gradients, glassmorphism cards everywhere, emoji bullets, generic "hero with blob", three identical feature cards, stock illustrations, Inter-on-white-with-indigo-button.
 - Centered everything. Lorem ipsum. Placeholder images.
 
+## Fallback taste checklist (when tasteskill isn't installed)
+
+tasteskill is preferred. If the user declined installing it, hold the build to these instead and run them in the review loop:
+
+- One idea per section; no section exists only to fill space. Headings at most two lines.
+- Real content everywhere: actual screenshots, loops, quotes, numbers from `story.json`. No placeholder shapes standing in for the work.
+- Type: two families max (plus mono only if the direction calls for data). Clear scale contrast between display and body; body 16-19px, 60-75ch measure.
+- Color: the 5 palette roles from `DESIGN.md`, one accent used sparingly. Check text contrast (4.5:1 body, 3:1 large).
+- Layout: vary rhythm between sections (not a stack of identical cards); align to a grid; generous but consistent spacing scale.
+- Motion: purposeful and short (200-800ms), never blocking content; everything works with `prefers-reduced-motion`.
+- No eyebrow labels over every heading, no numbered "01 / 02" section markers, no decorative emoji, no gradient text.
+- Mobile: no horizontal overflow, tap targets ≥ 44px, media keeps aspect ratio.
+
 ## `DESIGN.md` template
 
 ```markdown

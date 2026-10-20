@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Convert Playwright webm recordings into web-ready loops.
-# For each <name>.webm produces <name>.mp4 (h264), <name>.webp (animated), <name>.jpg (poster).
+# Optional: convert Playwright webm recordings into trimmed mp4 loops. Only useful when ffmpeg is
+# already installed; the webm + jpg poster from capture.mjs work in every current browser without it.
+# For each <name>.webm produces <name>.mp4 (h264), <name>.webp (animated, if libwebp), <name>.jpg (poster).
 # Reads <name>.webm.json sidecar ({ "trimStart": s }) written by capture.mjs.
 # Usage: to-loop.sh [--max 10] [--width 1440] file.webm ...
 set -euo pipefail
@@ -18,7 +19,7 @@ done
 [ ${#files[@]} -gt 0 ] || { echo "usage: to-loop.sh [--max s] [--width px] file.webm ..." >&2; exit 2; }
 
 if ! command -v ffmpeg >/dev/null; then
-  echo "ffmpeg not found; keeping webm only (brew install ffmpeg)" >&2
+  echo "ffmpeg not found; keeping webm + poster (that's fine)" >&2
   exit 0
 fi
 
@@ -30,7 +31,7 @@ for f in "${files[@]}"; do
   [ -f "$f" ] || continue
   base="${f%.webm}"
   trim=0
-  if [ -f "$f.json" ] && command -v jq >/dev/null; then trim="$(jq -r '.trimStart // 0' "$f.json")"; fi
+  if [ -f "$f.json" ]; then trim="$(node "$(dirname "${BASH_SOURCE[0]}")/lib/json.mjs" get "$f.json" .trimStart)"; trim="${trim:-0}"; fi
   vf="scale='min(${WIDTH},iw)':-2:flags=lanczos,fps=30"
 
   ffmpeg -y -loglevel error -ss "$trim" -t "$MAX" -i "$f" -an \
