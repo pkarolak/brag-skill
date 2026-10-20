@@ -22,7 +22,7 @@ The CLI detects your agent (Cursor, Claude Code, Codex, Gemini CLI, …) and lin
 
 ### What it needs
 
-The preflight checks and reports. It doesn't use Homebrew or download browsers, and it installs nothing outside the skill folder unless you say yes.
+The preflight checks and reports. It installs the skill's npm packages and ffmpeg; it doesn't download browsers or add other skills unless you say yes.
 
 | | Needed? | Notes |
 |---|---|---|
@@ -31,7 +31,7 @@ The preflight checks and reports. It doesn't use Homebrew or download browsers, 
 | Google Chrome or Edge | For screenshots, loops, PDF | Reuses the one you have. If neither is installed, it asks before downloading Playwright's Chromium (~300 MB), or falls back to the agent's own browser tool |
 | `gh` (signed in) | For Vibelab clones and code history | Skipped with a warning if missing |
 | tasteskill | Optional | Used if your agent already has it; otherwise the skill asks once and falls back to a built-in checklist |
-| ffmpeg | Optional | Converts loops to trimmed mp4 if present; webm + poster works without it |
+| ffmpeg | Required for loops | Installed via Homebrew if missing; trims and compresses screen recordings to mp4. If the install fails, loops stay webm + poster |
 
 Defaults adapt to the agent running the skill (Cursor, Claude Code, Codex, Gemini CLI): which skills folder to look in for tasteskill, where to install it if you agree, and which built-in browser tool to fall back on.
 
@@ -73,7 +73,7 @@ Paths are relative to `skills/brag-center/`.
 | `scripts/vibelab-localize.sh <app> <run> [--smoke\|--serve]` | Clone read-only, analyze, write `RUN-LOCALLY.md`, smoke-run |
 | `scripts/figma-fetch.mjs <spec> --run <run> [--publish]` | Download `download_assets` URLs, write the manifest |
 | `scripts/capture.mjs <jobs.json> --out <dir>` | Screenshots + scroll recordings (`--login` for SSO, `--svg` to render SVG, `--review` for QA shots) |
-| `scripts/to-loop.sh *.webm` | Optional, needs ffmpeg: webm → trimmed mp4 loop + poster |
+| `scripts/to-loop.sh *.webm` | webm → trimmed mp4 loop + poster (ffmpeg) |
 | `scripts/scaffold-site.sh <run> [--example]` | Create the site from `templates/site` |
 | `scripts/validate-story.mjs story.json` | Schema + claim-tag + media-file checks |
 | `scripts/export-pdf.mjs <url> [--project slug]` | PDF via the site's print stylesheet |

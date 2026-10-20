@@ -36,11 +36,11 @@ Copy and track:
 bash "$SKILL_DIR/scripts/check-env.sh" --agent <cursor|claude-code|codex|gemini-cli|other>   # pass the harness you are running in
 ```
 
-Check-only: the one thing it installs is the skill's own npm packages (`playwright-core`, `ajv`, ~16 MB inside `SKILL_DIR`). It never uses Homebrew. Read the `KEY=VALUE` lines at the end and pick defaults from what this agent and machine already have:
+It installs only the skill's own npm packages (`playwright-core`, `ajv`, ~16 MB inside `SKILL_DIR`) and ffmpeg (via Homebrew, if missing). Everything else is check-only. Read the `KEY=VALUE` lines at the end and pick defaults from what this agent and machine already have:
 
 - `BROWSER=chrome|msedge|…`: scripts drive that browser; nothing to download. `BROWSER=none`: ask once — install Chrome, or rerun with `--install browser` (Playwright Chromium, ~300 MB). If declined, take screenshots and review shots with `AGENT_BROWSER_TOOL` and skip loops and PDF.
 - `TASTESKILL=<path>`: use it. `none`: ask once whether to add it for this agent (`--install taste`, global skill); if declined, use the fallback checklist in [reference/art-direction.md](reference/art-direction.md).
-- `FFMPEG=no` is fine (loops stay webm). `GH` not `ok`: skip Vibelab clones and code harvest and log it.
+- `FFMPEG=no` means the install failed: loops stay webm (see step 6). `GH` not `ok`: skip Vibelab clones and code harvest and log it.
 
 Ask both questions (browser, tasteskill) in one `AskQuestion`, only for what's missing. Then call `GetDynamicTools` with no args and note which namespaces are live: Glean, Atlassian, Slack, Figma, Miro, Origin. Missing sources are skipped and listed in `REVIEW.md`; never block on one. Vibelab needs VPN (`warp-cli status`) and `~/.config/vibelab/token` (created by the vibelab skill's preflight).
 
@@ -110,10 +110,10 @@ Read [reference/exports.md](reference/exports.md) (proof section). Build `media-
 ```bash
 node "$SKILL_DIR/scripts/capture.mjs" --login            # once, if any source needs SSO; user signs in, then closes the window
 node "$SKILL_DIR/scripts/capture.mjs" media-jobs.json --out site/public/media
-bash "$SKILL_DIR/scripts/to-loop.sh" site/public/media/*.webm   # only if FFMPEG=yes
+bash "$SKILL_DIR/scripts/to-loop.sh" site/public/media/*.webm
 ```
 
-Video jobs write `<id>.webm` + `<id>.jpg` poster. With ffmpeg, use the trimmed `<id>.mp4`. Without it, reference the webm and set `start`/`end` on the media item from `<id>.webm.json` (`start = trimStart`, `end = trimStart + duration`) so the loop skips the page load.
+Reference the trimmed `<id>.mp4` and `<id>.jpg` poster from `story.json`. Fallback if ffmpeg is unavailable: reference the webm and set `start`/`end` on the media item from `<id>.webm.json` (`start = trimStart`, `end = trimStart + duration`) so the loop skips the page load.
 
 - Hero loops: Vibelab live URL first; if down or behind auth, the local clone (`vibelab-localize.sh <app> <run> --serve` prints a URL).
 - Proof shots: every source URL attached to a project (Confluence, Jira, Figma, Miro, Vibelab). Miro areas: `canvas_read_as_svg` → save `.svg` → `capture.mjs --svg file.svg`.

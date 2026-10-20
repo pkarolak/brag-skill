@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Preflight for brag-center. Checks and reports; installs nothing outside the skill folder unless asked.
+# Preflight for brag-center. Checks and reports; installs only the skill's npm packages and ffmpeg unless asked.
 #
 # Usage: check-env.sh [--agent cursor|claude-code|codex|gemini-cli|other] [--install browser,taste] [--no-install]
 #
-#   default        checks everything; installs the skill's own npm packages (~10 MB, inside the skill folder)
+#   default        checks everything; installs the skill's own npm packages (~16 MB, inside the skill folder) and ffmpeg (brew)
 #   --install browser   download Playwright's Chromium (~300 MB) — only needed when Chrome/Edge are missing
 #   --install taste     add tasteskill for the detected agent (global skill) — only with the user's consent
-#   --no-install        don't even install the skill's npm packages
+#   --no-install        don't install the skill's npm packages or ffmpeg
 #
 # Ends with KEY=VALUE lines (AGENT, BROWSER, TASTESKILL, FFMPEG, GH, VIBELAB, AGENT_BROWSER_TOOL) for the agent to read.
 set -uo pipefail
@@ -88,9 +88,15 @@ if [ -d "$SKILL_DIR/node_modules/playwright-core" ]; then
   esac
 fi
 
-# ffmpeg (optional; only used if already present)
-if command -v ffmpeg >/dev/null; then FFMPEG=yes; ok "ffmpeg (optional: loops get converted to mp4)"
-else FFMPEG=no; info "no ffmpeg — fine, loops stay webm with a jpg poster"; fi
+# ffmpeg (trims and compresses loops to mp4)
+if command -v ffmpeg >/dev/null; then FFMPEG=yes; ok "ffmpeg"
+elif [ "$DEPS" = 1 ] && command -v brew >/dev/null; then
+  echo "  ...   installing ffmpeg via brew (can take a few minutes)"
+  if brew install ffmpeg >/dev/null 2>&1; then FFMPEG=yes; ok "ffmpeg installed"
+  else FFMPEG=no; warn "ffmpeg install failed — loops stay webm with a jpg poster"; fi
+else
+  FFMPEG=no; warn "ffmpeg missing (brew install ffmpeg or https://ffmpeg.org) — loops stay webm with a jpg poster"
+fi
 
 # git / gh (gh needed for Vibelab clones and code harvest; never auto-installed)
 command -v git >/dev/null && ok "git" || warn "git missing — Vibelab clones will be skipped"
