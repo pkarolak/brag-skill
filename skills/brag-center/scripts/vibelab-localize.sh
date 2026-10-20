@@ -18,7 +18,7 @@ while [ $# -gt 0 ]; do
 done
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VURL="${VIBELAB_URL:-https://vibelab.miro.tools}"
+. "$SKILL_DIR/scripts/lib/vibelab-url.sh"
 TOKEN_FILE="$HOME/.config/vibelab/token"
 RUN="$(cd "$RUN" && pwd)"
 OUT="$RUN/projects/$APP"
@@ -29,7 +29,7 @@ log() { echo "[$APP] $*" >&2; }
 echo '{}' > "$OUT/app.json"
 if [ -s "$TOKEN_FILE" ]; then
   code="$(curl -s -o "$OUT/app.json.tmp" -w '%{http_code}' --connect-timeout 10 --max-time 30 \
-    -H "Authorization: Bearer $(cat "$TOKEN_FILE")" "$VURL/vlapi/apps/$APP" || echo 000)"
+    -H @<(printf 'Authorization: Bearer %s\n' "$(cat "$TOKEN_FILE")") "$VURL/vlapi/apps/$APP" || echo 000)"
   if [ "$code" = 200 ]; then mv "$OUT/app.json.tmp" "$OUT/app.json"; log "app record fetched"
   else rm -f "$OUT/app.json.tmp"; log "app record unavailable (HTTP $code); continuing from repo only"; fi
 else

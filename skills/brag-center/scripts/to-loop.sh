@@ -18,6 +18,11 @@ while [ $# -gt 0 ]; do
 done
 [ ${#files[@]} -gt 0 ] || { echo "usage: to-loop.sh [--max s] [--width px] file.webm ..." >&2; exit 2; }
 
+# Values reach ffmpeg filter strings; accept plain numbers only.
+is_num() { [[ "$1" =~ ^[0-9]+(\.[0-9]+)?$ ]]; }
+is_num "$MAX" || { echo "--max must be a number" >&2; exit 2; }
+[[ "$WIDTH" =~ ^[0-9]+$ ]] || { echo "--width must be an integer" >&2; exit 2; }
+
 if ! command -v ffmpeg >/dev/null; then
   echo "ffmpeg not found; keeping webm + poster (brew install ffmpeg for trimmed mp4 loops)" >&2
   exit 0
@@ -31,7 +36,9 @@ for f in "${files[@]}"; do
   [ -f "$f" ] || continue
   base="${f%.webm}"
   trim=0
-  if [ -f "$f.json" ]; then trim="$(node "$(dirname "${BASH_SOURCE[0]}")/lib/json.mjs" get "$f.json" .trimStart)"; trim="${trim:-0}"; fi
+  if [ -f "$f.json" ]; then trim="$(node "$(dirname "${BASH_SOURCE[0]}")/lib/json.mjs" get "$f.json" .trimStart)"; fi
+  is_num "$trim" || trim=0
+  poster_at="$(awk -v t="$trim" 'BEGIN { printf "%.3f", t + 0.8 }')"
   vf="scale='min(${WIDTH},iw)':-2:flags=lanczos,fps=30"
 
   ffmpeg -y -loglevel error -ss "$trim" -t "$MAX" -i "$f" -an \
@@ -42,7 +49,7 @@ for f in "${files[@]}"; do
       -vf "scale='min(960,iw)':-2:flags=lanczos,fps=15" -c:v libwebp -loop 0 -q:v 70 -compression_level 6 "$base.webp"
   fi
 
-  ffmpeg -y -loglevel error -ss "$(awk "BEGIN{print $trim+0.8}")" -i "$f" -frames:v 1 \
+  ffmpeg -y -loglevel error -ss "$poster_at" -i "$f" -frames:v 1 \
     -vf "scale='min(${WIDTH},iw)':-2" -q:v 3 "$base.jpg"
 
   dims="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$base.mp4" 2>/dev/null || echo "?")"

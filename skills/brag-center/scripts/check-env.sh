@@ -107,7 +107,9 @@ else
   GH=missing; warn "gh missing (https://cli.github.com) — Vibelab clone and code steps will be skipped"
 fi
 
-# tasteskill: use if present (agent's own skills folder first); install only on request
+# tasteskill: use if present (agent's own skills folder first); install only on request, from a reviewed commit (MIT)
+TASTE_SHA=63aba5f43b5056758b15bbe7d683da8c86a7a7ad
+TASTE_SRC="https://github.com/Leonxlnx/taste-skill/tree/$TASTE_SHA/skills/taste-skill"
 find_taste() {
   for d in $ALL_SKILL_DIRS; do
     [ -f "$d/design-taste-frontend/SKILL.md" ] && { echo "$d/design-taste-frontend/SKILL.md"; return; }
@@ -116,10 +118,10 @@ find_taste() {
 TASTE="$(find_taste)"
 if [ -z "$TASTE" ] && wants taste; then
   if [ "$AGENT" = other ]; then
-    warn "unknown agent; install tasteskill yourself: npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g"
+    warn "unknown agent; install tasteskill yourself: npx skills add $TASTE_SRC -g"
   else
-    echo "  ...   adding tasteskill for $AGENT"
-    (cd "$HOME" && npx --yes skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -a "$AGENT" -y >/dev/null 2>&1) || warn "tasteskill install failed"
+    echo "  ...   adding tasteskill for $AGENT (pinned ${TASTE_SHA:0:7})"
+    (cd "$HOME" && npx --yes skills add "$TASTE_SRC" -g -a "$AGENT" -y >/dev/null 2>&1) || warn "tasteskill install failed"
     TASTE="$(find_taste)"
   fi
 fi

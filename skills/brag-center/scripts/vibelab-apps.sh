@@ -14,7 +14,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-VURL="${VIBELAB_URL:-https://vibelab.miro.tools}"
+. "$(dirname "${BASH_SOURCE[0]}")/lib/vibelab-url.sh"
 TOKEN_FILE="$HOME/.config/vibelab/token"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 echo '[]' > "$TMP/apps.json"
@@ -22,7 +22,7 @@ echo '[]' > "$TMP/apps.json"
 # 1. Vibelab app records
 if [ -s "$TOKEN_FILE" ]; then
   code="$(curl -s -o "$TMP/raw.json" -w '%{http_code}' --connect-timeout 10 --max-time 30 \
-    -H "Authorization: Bearer $(cat "$TOKEN_FILE")" "$VURL/vlapi/apps" || echo 000)"
+    -H @<(printf 'Authorization: Bearer %s\n' "$(cat "$TOKEN_FILE")") "$VURL/vlapi/apps" || echo 000)"
   if [ "$code" = 200 ]; then
     cp "$TMP/raw.json" "$TMP/apps.json"
     echo "vibelab: app records fetched" >&2
