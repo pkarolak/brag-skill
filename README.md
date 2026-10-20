@@ -2,7 +2,7 @@
 
 An agent skill that turns an employee's email into a bespoke, local portfolio site of case studies, built from the sources your agent is already connected to.
 
-**Landing page:** https://pkarolak.github.io/brag-skill/
+**Landing page:** https://brag-skill.vercel.app/
 
 - **Evidence**: Glean, Vibelab, Jira, Confluence, Slack, Figma, GitHub / Origin, Miro
 - **Story**: 3-6 outcome-first case studies, an impact strip, real testimonials, a timeline. Flattering framing, with every claim tagged `sourced` / `inferred` / `embellished` in a private review file.
@@ -81,8 +81,8 @@ skills/brag-center/      the skill (what `npx skills add` installs)
   reference/             sources, storytelling, art direction, build, vibelab, figma, exports
   templates/             story.schema.json, example.story.json, RUN-LOCALLY.md, REVIEW.md, site/
   scripts/               helpers listed above
-web/                     landing page (Vite + React), deployed to GitHub Pages
-.github/workflows/       Pages deploy
+web/                     landing page (Vite + React)
+vercel.json              Vercel builds web/ on every push to main
 ```
 
 Work on the landing page with `cd web && npm install && npm run dev`.
