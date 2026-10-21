@@ -7,6 +7,19 @@ import { asset, replaceStory, story, type Story } from "../content/story";
 const box = data.locked ? data.box : null;
 export const lockScope = data.locked ? data.scope : null;
 
+if (!data.locked && data.unprotected) {
+  const bar = document.createElement("div");
+  bar.setAttribute("data-unprotected", "");
+  bar.setAttribute("role", "status");
+  bar.textContent = "Dev preview: password not enforced. Share only the BRAG_PASSWORD build (site/dist).";
+  bar.style.cssText =
+    "position:fixed;inset:auto 0 0 0;z-index:2147483647;padding:10px 16px;background:#b00020;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center";
+  const style = document.createElement("style");
+  style.textContent = "@media print{[data-unprotected]{display:none!important}}";
+  document.head.append(style);
+  document.body.append(bar);
+}
+
 let key: CryptoKey | null = null;
 let files: Record<string, string> = {};
 const listeners = new Set<() => void>();

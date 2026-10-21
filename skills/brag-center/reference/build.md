@@ -52,7 +52,7 @@ Case study (`#/work/<slug>`):
 
 ## Password protection
 
-On when `story.json` has `"lock": { "scope": "case-studies" | "site" }`. Production builds (`npm run build` with `BRAG_PASSWORD` set) encrypt the protected content and media; `npm run dev` is always unlocked.
+On when `story.json` has `"lock": { "scope": "case-studies" | "site" }`. Production builds (`npm run build` with `BRAG_PASSWORD` set) encrypt the protected content and media. `npm run dev` with `BRAG_PASSWORD` seals the text too (media stay plain); without it, dev is unlocked and shows a red "password not enforced" banner. Verify any URL you hand over with `scripts/check-lock.mjs <url> --scope <scope>`.
 
 - `case-studies`: home stays public. Projects arrive as teasers (`p.locked === true`, real `slug`, `title`, `period`, `tags`; everything else empty) until unlocked; testimonials and timeline are sealed too. Render locked projects on home as title-only cards that link to their case study, which shows the lock. Don't put project details into public fields (hero, impact, skills) or the build fails its leak check.
 - `site`: everything is sealed; `App` shows only the `Lock` screen until unlocked.

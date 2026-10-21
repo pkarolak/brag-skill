@@ -3,7 +3,8 @@
 // story.json `lock.scope` = "case-studies" | "site" turns it on; the password comes from BRAG_PASSWORD at build time
 // and is never written to disk. Protected content is AES-GCM encrypted with a PBKDF2-derived key, protected media
 // files are encrypted to media/locked/<id>.enc (names hidden), and the build fails if protected text leaks into dist.
-// `vite dev` always serves the unlocked site.
+// `vite dev` with BRAG_PASSWORD seals the text too (media stay plain, dev is localhost only); without it, dev serves
+// the site unlocked under a visible "not password protected" banner.
 import { createHash, webcrypto } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
@@ -87,10 +88,13 @@ export function bragLock(): Plugin {
       if (id !== RESOLVED) return null;
       const story = JSON.parse(readFileSync(resolve(root, "src/content/story.json"), "utf8"));
       const scope = story.lock?.scope;
-      if (!isBuild || !scope) return `export default ${JSON.stringify({ locked: false, story })};`;
+      if (!scope) return `export default ${JSON.stringify({ locked: false, story })};`;
 
       const password = process.env.BRAG_PASSWORD;
-      if (!password) throw new Error(`story.json has lock.scope="${scope}" but BRAG_PASSWORD is not set. Refusing to build an unprotected site.`);
+      if (!password) {
+        if (isBuild) throw new Error(`story.json has lock.scope="${scope}" but BRAG_PASSWORD is not set. Refusing to build an unprotected site.`);
+        return `export default ${JSON.stringify({ locked: false, story, unprotected: scope })};`;
+      }
 
       const salt = webcrypto.getRandomValues(new Uint8Array(16));
       const base = await subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
@@ -99,7 +103,7 @@ export function bragLock(): Plugin {
       const { preview, sealed } = split(story, scope);
       const publicFiles = mediaRefs(preview);
       const files: Record<string, string> = {};
-      for (const abs of walk(resolve(root, "public/media"))) {
+      for (const abs of isBuild ? walk(resolve(root, "public/media")) : []) {
         const rel = relative(resolve(root, "public"), abs).split("\\").join("/");
         if (publicFiles.has(rel)) continue;
         files[rel] = `media/locked/${createHash("sha256").update(b64(salt) + rel).digest("hex").slice(0, 20)}.enc`;

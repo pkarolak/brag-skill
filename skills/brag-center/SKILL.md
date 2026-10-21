@@ -141,26 +141,28 @@ Read [reference/art-direction.md](reference/art-direction.md). If a reference wa
 ## 10. Review loop (max 3 iterations)
 
 ```bash
-cd site && npm run dev -- --port 5180 &      # leave running
+cd site && npm run dev -- --port 5180 --strictPort &      # if protected: BRAG_PASSWORD='<password>' npm run dev …
 node "$SKILL_DIR/scripts/capture.mjs" --review http://localhost:5180 --out ../review
 ```
 
 Look at `review/*.png` (desktop + mobile, every route). Run tasteskill's pre-flight checklist (or the fallback checklist) honestly. Fix and repeat. Stop after 3 rounds; log leftovers in `REVIEW.md`.
 
-If protected, finish with a locked build and review that instead of the dev server (the dev server is always unlocked):
+If protected, finish by **replacing** the dev server with the locked build on the same port. Without `BRAG_PASSWORD` the dev server serves everything unlocked (under a red banner), and a second server would silently land on another port while 5180 stays open:
 
 ```bash
-cd site && BRAG_PASSWORD='<password>' npm run build && npx vite preview --port 5180 &
+lsof -ti tcp:5180 | xargs kill 2>/dev/null; sleep 1        # stop the dev server
+cd site && BRAG_PASSWORD='<password>' npm run build && npx vite preview --port 5180 --strictPort &
 BRAG_PASSWORD='<password>' node "$SKILL_DIR/scripts/capture.mjs" --review http://localhost:5180 --out ../review
+node "$SKILL_DIR/scripts/check-lock.mjs" http://localhost:5180 --scope <case-studies|site>
 ```
 
-The build fails if the password is missing or protected text leaks into the bundle. Check `review/*-lock.png` shows the lock screen and the other shots show unlocked content with media loaded.
+The build fails if the password is missing or protected text leaks into the bundle. `check-lock.mjs` must print `protected:`; if it prints `NOT PROTECTED`, fix that before handoff. Check `review/*-lock.png` shows the lock screen and the other shots show unlocked content with media loaded.
 
 ## 11. Handoff + extras
 
 Finalize `REVIEW.md` from [templates/REVIEW.md](templates/REVIEW.md): connections used and missing (with what to connect next time), claims by confidence, screenshots that may show confidential data, app smoke results, design files needing manual download.
 
-Report: run folder path, `http://localhost:5180`, a 3-line story summary, and, if protected, the scope and that `site/dist` is the protected build to share (never the dev server or `site/src`). Then one multi-select `AskQuestion` with only the extras that apply:
+Report: run folder path, `http://localhost:5180`, a 3-line story summary, and, if protected, the scope and that `site/dist` is the protected build to share (never the dev server or `site/src`). If protected, report the URL only after `check-lock.mjs` passed on it in this step, and never mention a dev-server URL. Then one multi-select `AskQuestion` with only the extras that apply:
 
 - **PDF**: `node "$SKILL_DIR/scripts/export-pdf.mjs" http://localhost:5180 --out exports/portfolio.pdf [--project <slug>]`. If protected, prefix `BRAG_PASSWORD='<password>'`: it unlocks the site and also encrypts the PDF with the same password when `qpdf` is installed; otherwise say plainly that the PDF is not password protected.
 - **Copy whiteboards to an account of choice** (when a whiteboard tool is connected): follow [reference/exports.md](reference/exports.md) (whiteboard section).
