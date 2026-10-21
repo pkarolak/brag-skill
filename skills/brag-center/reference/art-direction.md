@@ -1,11 +1,11 @@
 # Art direction
 
-Goal: a site that looks like it was designed for this one person by someone who knows their craft. Never a template. Never Miro-branded.
+Goal: a site that looks like it was designed for this one person by someone who knows their craft. Never a template. Never dressed in the employer's brand.
 
 ## Inputs, in priority order
 
-1. Style reference from intake (URL, image, Figma). Extract: type families/classes, scale contrast, palette (5 roles: ground, surface, ink, muted, accent), grid, density, imagery treatment, motion. Translate; don't clone.
-2. Discipline + persona (identity.json, evidence tone, the work itself — the colors and forms in their own Figma/apps are a strong signal).
+1. Style reference from intake (URL, image, design file). Extract: type families/classes, scale contrast, palette (5 roles: ground, surface, ink, muted, accent), grid, density, imagery treatment, motion. Translate; don't clone.
+2. Discipline + persona (identity.json, evidence tone, the work itself — the colors and forms in their own designs/apps are a strong signal).
 3. Angle notes (e.g. "promotion to Staff" → calmer, more authoritative; "AI tooling" → technical, live demos up front).
 
 ## Discipline starting points (pick one, then twist)
@@ -26,7 +26,7 @@ Twist with one personal element from the evidence: a color from their best proje
 
 ## Hard bans
 
-- Miro yellow (#FFD02F and near hues as accent), Miro's typeface, sticky-note / infinite-canvas aesthetics.
+- The employer's brand by default: its logo, brand colors as accent, its typeface, its product UI look (unless the user explicitly asks for it). Also sticky-note / whiteboard aesthetics borrowed from board evidence.
 - Purple-to-blue gradients, glassmorphism cards everywhere, emoji bullets, generic "hero with blob", three identical feature cards, stock illustrations, Inter-on-white-with-indigo-button.
 - Centered everything. Lorem ipsum. Placeholder images.
 

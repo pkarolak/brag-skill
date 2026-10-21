@@ -1,8 +1,8 @@
-# Run {{APP}} locally (outside Vibelab)
+# Run {{APP}} locally (outside {{PLATFORM}})
 
-- Live (Vibelab): {{LIVE_URL}}
+- Live: {{LIVE_URL}}
 - Repo: {{REPO}}
-- Status on Vibelab at snapshot: {{STATUS}}
+- Status on {{PLATFORM}} at snapshot: {{STATUS}}
 - Local smoke test: **{{SMOKE}}**
 - Snapshot: {{DATE}}
 
@@ -34,7 +34,7 @@ cp ../.env.local.example .env   # fill in values, see below
 
 Open http://localhost:{{PORT}}
 
-## Differences from Vibelab
+## Differences from {{PLATFORM}}
 
 {{DIFFS}}
 
@@ -49,7 +49,7 @@ Open http://localhost:{{PORT}}
 ## Troubleshooting
 
 - Port in use: `lsof -ti:{{PORT}} | xargs kill` or run with `PORT=<other>`.
-- `@mirohq-internal` install fails: configure Artifactory in `~/.npmrc` (see internal docs); never commit tokens.
-- Managed AI calls fail: connect Cloudflare WARP, or set your own `OPENAI_API_KEY` and unset `OPENAI_BASE_URL`.
+- Install fails with 401/403: the app uses a private package registry; configure access in your user-level config, never commit tokens.
+- AI calls fail: production may route through a company proxy; set your own provider key and unset any `*_BASE_URL` override.
 - Blank page on a static app: make sure you ran the build and are serving the output dir ({{OUT_DIR}}).
 - Smoke log: `smoke.log` next to this file.

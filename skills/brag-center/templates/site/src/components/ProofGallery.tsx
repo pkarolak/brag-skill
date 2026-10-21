@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import type { Proof, ProofSource } from "../content/story";
+import type { Proof } from "../content/story";
 import { useAsset } from "../lib/lock";
 import { ExternalLink } from "./ExternalLink";
 
@@ -8,18 +8,28 @@ function ProofImage({ src, ...rest }: { src: string } & Omit<React.ImgHTMLAttrib
   return url ? <img src={url} {...rest} /> : null;
 }
 
-export const sourceLabel: Record<ProofSource, string> = {
+const labels: Record<string, string> = {
   jira: "Jira",
   confluence: "Confluence",
+  linear: "Linear",
+  notion: "Notion",
+  gdrive: "Google Drive",
+  sharepoint: "SharePoint",
   figma: "Figma",
+  figjam: "FigJam",
   miro: "Miro",
-  vibelab: "Vibelab",
+  mural: "Mural",
   github: "GitHub",
-  origin: "Origin",
+  gitlab: "GitLab",
+  bitbucket: "Bitbucket",
   slack: "Slack",
+  teams: "Teams",
   glean: "Doc",
+  app: "Live app",
   other: "Source",
 };
+
+export const sourceLabel = (s: string) => labels[s] ?? s.replace(/(^|-)(\w)/g, (_, sep, c) => (sep ? " " : "") + c.toUpperCase());
 
 type Props = {
   items: Proof[];
@@ -52,7 +62,7 @@ export function ProofGallery({ items, title = "Behind the work", classNames: c =
                 <ProofImage className={c.image ?? "w-full"} src={p.src} alt={p.caption} width={p.width} height={p.height} loading="lazy" decoding="async" />
               </button>
               <figcaption className={c.meta}>
-                <span className={c.label}>{sourceLabel[p.source]}</span>{" "}
+                <span className={c.label}>{sourceLabel(p.source)}</span>{" "}
                 {p.url ? (
                   <ExternalLink href={p.url} className={c.caption}>
                     {p.caption}

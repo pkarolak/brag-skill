@@ -10,7 +10,7 @@ dir="$base"
 n=2
 while [ -e "$dir" ]; do dir="${base}-${n}"; n=$((n + 1)); done
 
-mkdir -p "$dir"/{evidence/miro,projects,assets/figma,exports/miro,review}
+mkdir -p "$dir"/{evidence/boards,projects,assets/design,exports,review}
 cat > "$dir/.gitignore" <<'EOF'
 projects/*/repo/
 projects/*/repo/**/node_modules/

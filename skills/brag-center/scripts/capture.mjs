@@ -3,7 +3,8 @@
 // Video jobs write <id>.webm plus an <id>.jpg poster; to-loop.sh (ffmpeg) is optional.
 //
 //   node capture.mjs <jobs.json> --out <dir> [--profile <dir>] [--only id1,id2]
-//   node capture.mjs --login [url ...]                     headed browser to sign in once (persistent profile)
+//   node capture.mjs --login [url ...]                     headed browser to sign in once (persistent profile);
+//                                                          no URLs: hosts of "auth": true jobs in ./media-jobs.json
 //   node capture.mjs --svg <file.svg ...> --out <dir>      render SVG files to PNG
 //   node capture.mjs --review <siteUrl> --out <dir>        desktop + mobile full-page shots of every route
 //
@@ -171,14 +172,17 @@ async function runJobs(path) {
 }
 
 async function login(urls) {
+  let targets = urls;
+  if (!targets.length && existsSync("media-jobs.json")) {
+    const jobs = JSON.parse(readFileSync("media-jobs.json", "utf8"));
+    targets = [...new Set(jobs.filter((j) => j.auth && j.url).map((j) => new URL(j.url).origin + "/"))];
+  }
+  if (!targets.length) {
+    console.error("--login needs URLs to sign in to (or a media-jobs.json in this folder with \"auth\": true jobs)");
+    process.exit(2);
+  }
   mkdirSync(PROFILE, { recursive: true });
   const context = await launchPersistent(PROFILE, { headless: false, viewport: null });
-  const targets = urls.length ? urls : [
-    "https://vibelab.miro.tools/",
-    "https://miro.atlassian.net/",
-    "https://app.glean.com/",
-    "https://github.com/login",
-  ];
   const [first] = context.pages();
   await first.goto(targets[0]).catch(() => {});
   for (const u of targets.slice(1)) await (await context.newPage()).goto(u).catch(() => {});

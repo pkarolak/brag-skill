@@ -35,8 +35,8 @@ Case study (`#/work/<slug>`):
 - Hero media (loop webm or mp4 with poster, `autoplay muted playsInline`; `Media` handles `start`/`end` for untrimmed webm)
 - Context → Challenge → Role → Moves → Outcome → Impact, laid out with rhythm (not one long text column unless that's the concept)
 - Media gallery (`media[]`)
-- **Proof gallery** (`proof[]`): grid of real-artifact screenshots; each with source type label (Jira, Confluence, Figma, Miro, Vibelab, GitHub), caption, link. Lightbox on click. `data-print="proof"` on the section.
-- For Vibelab projects: "Try it" link to live URL and a small "runs locally" note pointing to `projects/<app>/RUN-LOCALLY.md`
+- **Proof gallery** (`proof[]`): grid of real-artifact screenshots; each with source type label (the `source` value mapped to a readable name, e.g. Jira, Notion, Figma, GitHub; unknown values title-cased), caption, link. Lightbox on click. `data-print="proof"` on the section.
+- For projects with an `app`: "Try it" link to the live URL and a small "runs locally" note pointing to `projects/<app>/RUN-LOCALLY.md`
 - Next project link
 
 ## Rules
@@ -66,6 +66,6 @@ On when `story.json` has `"lock": { "scope": "case-studies" | "site" }`. Product
 ```bash
 cd site
 npm run dev -- --port 5180     # review + PDF export
-npm run build                  # static dist/ (for Vibelab or zip); BRAG_PASSWORD='…' when story.json has lock
+npm run build                  # static dist/ (for any static host or zip); BRAG_PASSWORD='…' when story.json has lock
 npm run preview -- --port 5181
 ```

@@ -4,11 +4,11 @@ const panel = "rounded-2xl bg-white/80 p-4 text-[13px] text-black shadow-[0_1px_
 
 export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
   switch (kind) {
-    case "vibelab":
+    case "apps":
       return (
         <div className={`${panel} font-mono text-[12px] leading-[1.7]`}>
           <div className="font-sans text-[13px] font-medium">RUN-LOCALLY.md — meet-log</div>
-          <div className="mt-2 text-black/60"># works outside Vibelab</div>
+          <div className="mt-2 text-black/60"># works outside the platform</div>
           <div>cp .env.local.example .env.local</div>
           <div>bun install && bun run dev</div>
           <div className="mt-2 flex flex-wrap gap-1.5 font-sans">
@@ -20,7 +20,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </div>
         </div>
       );
-    case "glean":
+    case "people":
       return (
         <div className={`${panel} flex items-center gap-4`}>
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-black font-serif text-[22px] italic text-white">J</div>
@@ -31,7 +31,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </div>
         </div>
       );
-    case "jira":
+    case "work":
       return (
         <div className={`${panel} space-y-2`}>
           {[
@@ -47,7 +47,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           ))}
         </div>
       );
-    case "slack":
+    case "chat":
       return (
         <div className={panel}>
           <div className="flex items-baseline gap-2">
@@ -61,7 +61,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </div>
         </div>
       );
-    case "figma":
+    case "design":
       return (
         <div className={`${panel} grid grid-cols-3 gap-2`}>
           {["Bulk select", "Confirm", "Empty state"].map((n, i) => (
@@ -93,7 +93,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </div>
         </div>
       );
-    case "miro":
+    case "boards":
       return (
         <div className={`${panel} relative h-[118px] overflow-hidden bg-[#fbfbf6]`}>
           <div className="absolute left-3 top-3 h-[86px] w-[46%] rounded-md border border-black/15 p-2">
@@ -109,7 +109,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </svg>
           <div className="absolute right-3 top-3 h-[86px] w-[34%] rounded-md bg-black p-2 text-[10px] text-white">
             copied to
-            <div className="mt-1 font-serif text-[15px] italic leading-tight text-lime">Jane’s Miro</div>
+            <div className="mt-1 font-serif text-[15px] italic leading-tight text-lime">Jane’s account</div>
           </div>
         </div>
       );
@@ -125,7 +125,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
               <span key={c} className="h-3.5 w-3.5 rounded-full border border-black/10" style={{ background: c }} />
             ))}
           </div>
-          <div><span className="text-black/45">banned</span> #FFD02F, gradients, emoji</div>
+          <div><span className="text-black/45">banned</span> employer brand, gradients, emoji</div>
         </div>
       );
   }

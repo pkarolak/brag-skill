@@ -11,14 +11,14 @@ export function Sources() {
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <Reveal>
             <h2 className="display text-[clamp(52px,7vw,104px)]">
-              Eight sources.
+              Whatever’s connected.
               <br />
               <span className="font-serif italic tracking-[-0.02em]">One story.</span>
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="max-w-[34ch] text-[18px] leading-[1.45] text-black/65">
-              Every connection your agent already has is read in parallel. Vibelab leads, because a working app is the best proof there is.
+              Tools are read by what they do, not what they’re called. Every connection your agent has works; missing ones get a suggestion, never a blocker. Apps lead, because a working app is the best proof there is.
             </p>
           </Reveal>
         </div>

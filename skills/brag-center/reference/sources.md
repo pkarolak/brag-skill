@@ -1,58 +1,58 @@
 # Harvest playbook
 
-One section per source. Each subagent gets: identity, time window, angle, and its section. Output: `evidence/<source>.json` (array of evidence items, see SKILL.md). Keep 10-60 items per source; prefer items where the person is owner/lead. Always keep the URL.
+One section per capability (see [connections.md](connections.md)). Each subagent gets: identity, time window, angle, the connector it should use, and its section. Output: `evidence/<connector>.json` (array of evidence items, see SKILL.md). Keep 10-60 items per source; prefer items where the person is owner/lead. Always keep the URL.
 
-Role signals, strongest first: authored/owned → assignee on epic → driver named in announcement → reviewer/approver → mentioned.
+Role signals, strongest first: authored/owned → assignee on epic/project → driver named in announcement → reviewer/approver → mentioned.
 
-## Glean (`user-glean`)
+Tool names differ between connectors; read the connector's tool list and map these intents onto it. The connector notes below are tips for common tools, not requirements.
 
-- `search` with structured params: `owner: "<name>"`, then `from: "<name>"` (edited/commented), each with `updated` covering the window. Queries: `"project"`, `"launch"`, `"RFC"`, `"design doc"`, `"retro"`, `"OKR"`, `"results"`, plus angle keywords.
-- `chat`: "What projects has <name> (<email>) led or significantly contributed to since <date>? For each: goal, their role, outcome, metrics, links." Treat the answer as leads, then verify via `read_document` on the top 5-10 docs.
-- `read_document` on docs that look like project briefs, launch posts, retros, perf summaries. Pull metrics and quotes.
-- `user_activity`: only when the runner is the subject.
-- Vet per the Glean vetting rule: drop keyword coincidences; prefer docs < 12 months, mark older ones with their date.
+## Docs / enterprise search
 
-## Atlassian (`plugin-atlassian-atlassian`)
+Intents: documents the person owns; documents they edited or commented on; briefs, RFCs, design docs, launch posts, retros, OKRs, results, plus angle keywords; read the top 5-10 in full for metrics and quotes.
 
-- `getAccessibleAtlassianResources` once → `cloudId`.
-- Account ID: take it from Glean `employee_search` → `datasourceToProfileLink.JIRA` (`.../jira/people/<accountId>`). Fallback: `discover` "find user by email".
-- JQL (paginate, `responseFields` to slim):
-  - `issuetype = Epic AND (assignee = <id> OR reporter = <id>) AND updated >= -<N>d ORDER BY updated DESC`
-  - `assignee = <id> AND statusCategory = Done AND resolved >= -<N>d ORDER BY priority DESC`
-- `searchConfluence` (CQL): `creator = "<id>" AND type = page AND lastmodified >= now("-<N>d")`, also `contributor = "<id>"`.
-- Keep: epic summary + description (goal), child count, labels, linked Figma/Miro/Vibelab URLs (collect into `links[]` — other phases use them).
+- **Glean**: `search` with structured params (`owner: "<name>"`, then `from: "<name>"`, each with `updated` covering the window). `chat`: "What projects has <name> (<email>) led or significantly contributed to since <date>? For each: goal, role, outcome, metrics, links." Treat as leads; verify with `read_document`. `user_activity` only when the runner is the subject. Drop keyword coincidences; mark docs older than 12 months with their date.
+- **Confluence**: CQL `creator = "<accountId>" AND type = page AND lastmodified >= now("-<N>d")`, also `contributor = "<accountId>"`.
+- **Notion / Google Drive / SharePoint**: search by author/owner where supported, else by name + project keywords, then filter by last editor.
 
-## Slack (`plugin-slack-slack`)
+## Work tracking
 
-Read the slack-search skill first. The Slack user ID is in Glean `employee_search` → `datasourceToProfileLink.SLACK` (`.../team/<userId>`); use `<@userId>` for mentions. Queries (from the window start):
+Intents: epics/projects the person owns or reported; their completed work in the window, high priority first; goal, child count, labels, linked design/board/app URLs (collect into `links[]`: other phases use them).
 
-- Kudos: `"<first name>" (thanks OR kudos OR shoutout OR "great work" OR "huge" OR "amazing")`
-- Launches: `from:<@user> (launched OR shipped OR "live" OR released OR announcing)`
-- Mentions in announcement channels (`#announcements`, team channels found via Glean).
+- **Jira**: `getAccessibleAtlassianResources` once for `cloudId`. Account ID from the directory profile links, else look up the user by email. JQL: `issuetype = Epic AND (assignee = <id> OR reporter = <id>) AND updated >= -<N>d ORDER BY updated DESC`; `assignee = <id> AND statusCategory = Done AND resolved >= -<N>d ORDER BY priority DESC`.
+- **Linear**: projects where the person is lead; completed issues assigned to them in the window.
+- **GitHub/GitLab issues**: `gh search issues --author <login>` / `--assignee <login>`, closed in the window.
+- **Asana / Shortcut / ClickUp**: projects owned + completed tasks assigned.
 
-Keep: message permalink, author name + title (look up via Glean `employee_search`), the quote (trim to ≤ 280 chars). These become `testimonials[]`. Never post or react.
+## Chat
 
-## Code (`gh` CLI, `cursor-origin`)
+Intents: kudos ("thanks", "kudos", "shoutout", "great work", "huge", "amazing" near the first name); launches from the person ("launched", "shipped", "live", "released", "announcing"); mentions in announcement and team channels. Keep permalink, author name + title (look up via directory), and the quote (≤ 280 chars). These become `testimonials[]`. Never post or react.
 
-- `gh api -X GET search/commits -f q="author-email:<email> committer-date:>=<date>" --paginate -q '.items[].repository.full_name' | sort | uniq -c | sort -rn`
-- `gh search prs --author <login> --merged --sort updated --limit 100 --json title,url,repository,closedAt,additions,deletions`
-- Login from email: first commit result's `.author.login`.
-- Origin: `list_namespaces` → `list_pull_requests` filtered by author where available.
-- Keep: repos ranked by commits, notable PRs (big diff, many reviewers, "feat:" titles), first/last dates.
+- **Slack**: read the slack-search skill if available. Use `<@userId>` for mentions and `from:<@userId>` for authored messages.
+- **Microsoft Teams / Google Chat**: same intents via their search tools.
 
-## Figma (`user-figma`) — discovery + previews only
+## Code
 
-- Collect Figma URLs from all other evidence (`links[]`), Glean `search` with `app: "figma"` and `owner`/`from` set to the person.
-- For each unique file (cap 15): `create_session` (fileKey, "brag-center preview"), `get_metadata` on the root to list pages, `get_screenshot` of the first top-level frame of the most relevant page.
-- Keep: file name, URL, fileKey, last modified, preview path. Downloads happen in step 4c ([figma.md](figma.md)).
+Intents: repos ranked by the person's commits; notable PRs/MRs (big diff, many reviewers, `feat:` titles); first/last dates.
 
-## Miro (`user-miro-mcp`)
+- **GitHub (`gh`)**: `bash "$SKILL_DIR/scripts/repos-by-author.sh" <email> --since <date>`; `gh search prs --author <login> --merged --sort updated --limit 100 --json title,url,repository,closedAt`. Login from email: first commit result's author login.
+- **GitLab (`glab` or MCP)**, **Bitbucket**, **Azure Repos**, **Cursor Origin**: list merged MRs/PRs by author in the window.
 
-- `content_search` has no owner filter: search with `miro_type: ["board"]` for the person's name, project names, Vibelab app names, and Jira epic names, plus every miro.com board URL found in other evidence. Board text and descriptions often mention who generated or owns them.
-- For up to 8 boards: `canvas_search` (`result_mode: "overview"`) to find frames/regions, then `canvas_read_as_svg` for the most meaningful ones (save the returned `svg` verbatim under `evidence/miro/<board-slug>/`).
-- Mine the SVG text for links (Vibelab URLs, Jira keys, Figma links) and add them to `links[]`: boards are good glue between sources.
-- Keep: board name, URL, last modified, frames saved. Miro content is evidence only; it never influences the site style.
+## Design (discovery + previews only)
 
-## Vibelab
+- Collect design URLs from all other evidence (`links[]`) and from docs search filtered to the design tool.
+- **Figma**: for each unique file (cap 15): `create_session` (fileKey, "brag-center preview"), `get_metadata` on the root to list pages, `get_screenshot` of the first top-level frame of the most relevant page. Keep file name, URL, fileKey, last modified, preview path. Downloads happen in step 5c ([figma.md](figma.md)).
+- Other design tools: keep URLs and any preview/thumbnail their tools return; screenshot the share page in step 7 otherwise.
 
-Handled by the main agent; see [vibelab.md](vibelab.md).
+## Whiteboards
+
+Intents: boards the person created or that mention them or their projects; the most meaningful frames as images; links found on boards (boards are good glue between sources).
+
+- **Miro**: `content_search` has no owner filter: search `miro_type: ["board"]` for the person's name, project and epic names, plus every board URL found in other evidence. For up to 8 boards: `canvas_search` (`result_mode: "overview"`), then `canvas_read_as_svg` for the meaningful frames (save the `svg` verbatim under `evidence/boards/<board-slug>/`). Mine SVG text for links.
+- **FigJam**: Figma tools (`get_figjam`).
+- **Mural / Lucid / Excalidraw**: their search + export tools; else URLs for screenshots.
+
+Board content is evidence only; it never influences the site style.
+
+## Apps
+
+Handled by the main agent; see [apps.md](apps.md).

@@ -8,7 +8,7 @@
 #   --install taste     add tasteskill for the detected agent (global skill) — only with the user's consent
 #   --no-install        don't install the skill's npm packages or ffmpeg
 #
-# Ends with KEY=VALUE lines (AGENT, BROWSER, TASTESKILL, FFMPEG, GH, VIBELAB, AGENT_BROWSER_TOOL) for the agent to read.
+# Ends with KEY=VALUE lines (AGENT, BROWSER, TASTESKILL, FFMPEG, GH, GIT, CLIS, AGENT_BROWSER_TOOL) for the agent to read.
 set -uo pipefail
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -98,14 +98,21 @@ else
   FFMPEG=no; warn "ffmpeg missing (brew install ffmpeg or https://ffmpeg.org) — loops stay webm with a jpg poster"
 fi
 
-# git / gh (gh needed for Vibelab clones and code harvest; never auto-installed)
-command -v git >/dev/null && ok "git" || warn "git missing — Vibelab clones will be skipped"
+# git / code-host CLIs (never auto-installed)
+if command -v git >/dev/null; then GIT=ok; ok "git"; else GIT=missing; warn "git missing — app clones will be skipped"; fi
 if command -v gh >/dev/null; then
   if gh auth status >/dev/null 2>&1; then GH=ok; ok "gh authenticated"
-  else GH=unauthenticated; warn "gh not signed in (gh auth login) — Vibelab clone and code steps will be skipped"; fi
+  else GH=unauthenticated; info "gh not signed in (gh auth login) — GitHub code search needs it"; fi
 else
-  GH=missing; warn "gh missing (https://cli.github.com) — Vibelab clone and code steps will be skipped"
+  GH=missing; info "gh not installed (https://cli.github.com) — GitHub code search needs it"
 fi
+
+# CLIs for code hosts and app platforms the user is already signed in to (reported only)
+CLIS=""
+for c in glab vercel netlify fly flyctl render heroku railway wrangler firebase gcloud az aws; do
+  command -v "$c" >/dev/null && CLIS="$CLIS${CLIS:+,}$c"
+done
+[ -n "$CLIS" ] && ok "platform CLIs: $CLIS"
 
 # tasteskill: use if present (agent's own skills folder first); install only on request, from a reviewed commit (MIT)
 TASTE_SHA=63aba5f43b5056758b15bbe7d683da8c86a7a7ad
@@ -128,15 +135,6 @@ fi
 if [ -n "$TASTE" ]; then ok "tasteskill: $TASTE"
 else info "tasteskill not installed — ask the user once (--install taste), otherwise use the fallback checklist in reference/art-direction.md"; fi
 
-# Vibelab (optional source)
-VURL="${VIBELAB_URL:-https://vibelab.miro.tools}"
-VIBELAB=ok
-if [ ! -s "$HOME/.config/vibelab/token" ]; then
-  VIBELAB=no-token; warn "vibelab token missing (run the vibelab skill preflight) — Vibelab step will be skipped"
-else
-  code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$VURL/vlapi/health" || true)"
-  if [ "$code" != "000" ] && [ -n "$code" ]; then ok "vibelab reachable"; else VIBELAB=unreachable; warn "Vibelab not reachable — connect WARP"; fi
-fi
 
 echo
 echo "AGENT=$AGENT"
@@ -144,7 +142,8 @@ echo "BROWSER=$BROWSER"
 echo "TASTESKILL=${TASTE:-none}"
 echo "FFMPEG=$FFMPEG"
 echo "GH=$GH"
-echo "VIBELAB=$VIBELAB"
+echo "GIT=$GIT"
+echo "CLIS=${CLIS:-none}"
 echo "AGENT_BROWSER_TOOL=$AGENT_BROWSER"
 echo
 [ "$FAILED" = 0 ] && echo "preflight: OK" || { echo "preflight: FAILED (fix the FAIL lines above)"; exit 1; }

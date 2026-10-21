@@ -5,7 +5,7 @@
 1. **Hero**: one sentence positioning ("Builds the internal tools 3,000 people use every day"), name, title, team. Specific, not adjectives.
 2. **Impact strip**: 3-5 numbers or crisp facts (apps shipped, users reached, time saved, launches, teams unblocked).
 3. **Case studies**: 3-6 projects, strongest first (angle-relevant first).
-4. **Voices**: 2-6 testimonials from Slack/Glean, attributed with name + role.
+4. **Voices**: 2-6 testimonials from chat and docs, attributed with name + role.
 5. **Timeline**: dated milestones across the window.
 6. **Toolbox**: skills/stack inferred from evidence (not a logo wall).
 

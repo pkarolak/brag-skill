@@ -2,18 +2,18 @@ export const REPO = "https://github.com/pkarolak/brag-skill";
 export const SKILL_PATH = `${REPO}/tree/main/skills/brag-center`;
 export const blob = (p: string) => `${REPO}/blob/main/skills/brag-center/${p}`;
 export const INSTALL = "npx skills add pkarolak/brag-skill";
-export const PROMPT = "brag center for jane.doe@miro.com";
+export const PROMPT = "brag center for jane@acme.com";
 
 export const stats = [
   { value: "1", label: "email in" },
-  { value: "8", label: "sources read" },
+  { value: "0", label: "required integrations" },
   { value: "3–6", label: "case studies out" },
 ];
 
 export const statements = [
-  "Your best work is scattered across Jira epics, Slack threads, Figma files and apps on Vibelab. Nobody has an afternoon to turn it into a story.",
-  "Brag Center reads all of it, finds the projects that mattered, and writes them up as case studies with screenshots, screen-grab loops and real quotes.",
-  "Every site is built once, for one person, in a style drawn from their craft. No template. No Miro yellow.",
+  "Your best work is scattered across tickets, chat threads, design files, repos and apps on whatever platform your company runs. Nobody has an afternoon to turn it into a story.",
+  "Brag Center reads whatever your agent can reach, finds the projects that mattered, and writes them up as case studies with screenshots, screen-grab loops and real quotes.",
+  "Every site is built once, for one person, in a style drawn from their craft. No template. No company brand by default.",
 ];
 
 export type Source = {
@@ -23,72 +23,72 @@ export type Source = {
   role: string;
   facts: string[];
   doc: string;
-  fragment: "vibelab" | "glean" | "jira" | "slack" | "figma" | "code" | "miro" | "taste";
+  fragment: "apps" | "people" | "work" | "chat" | "design" | "code" | "boards" | "taste";
 };
 
 export const sources: Source[] = [
   {
-    name: "Vibelab",
+    name: "Apps",
     color: "var(--color-cyan)",
     ink: "dark",
-    role: "Primary source of truth",
-    facts: ["Finds every app the person built, by owner or commit", "Clones each one read-only and smoke-runs it locally", "Writes RUN-LOCALLY.md so the work outlives the platform"],
-    doc: blob("reference/vibelab.md"),
-    fragment: "vibelab",
+    role: "Vercel, Netlify, Replit, or your internal platform",
+    facts: ["Asks where your company hosts apps and how to get in", "Finds the person's apps by owner or commit, clones and smoke-runs them", "Writes RUN-LOCALLY.md so the work outlives the platform"],
+    doc: blob("reference/apps.md"),
+    fragment: "apps",
   },
   {
-    name: "Glean",
+    name: "People & docs",
     color: "var(--color-sprout)",
     ink: "dark",
-    role: "Identity and documents",
-    facts: ["Title, team, tenure, Jira and Slack IDs from one lookup", "Docs they own or edited, vetted for freshness", "Project summaries cross-checked against the source docs"],
+    role: "Glean, Notion, Confluence, Google Drive, SharePoint",
+    facts: ["Title, team, tenure and their ID in every other tool", "Docs they own or edited, vetted for freshness", "Project summaries cross-checked against the source docs"],
     doc: blob("reference/sources.md"),
-    fragment: "glean",
+    fragment: "people",
   },
   {
-    name: "Jira & Confluence",
+    name: "Work tracking",
     color: "var(--color-blush)",
     ink: "dark",
-    role: "Scope and outcomes",
-    facts: ["Epics they owned or drove, with goals and child counts", "Pages they authored: briefs, retros, RFCs", "Linked Figma, Miro and Vibelab URLs for the other phases"],
+    role: "Jira, Linear, GitHub Issues, Asana",
+    facts: ["Epics and projects they owned or drove", "Completed work in the window, highest priority first", "Linked design, board and app URLs for the other phases"],
     doc: blob("reference/sources.md"),
-    fragment: "jira",
+    fragment: "work",
   },
   {
-    name: "Slack",
+    name: "Chat",
     color: "var(--color-iris)",
     ink: "light",
-    role: "Voices",
+    role: "Slack, Microsoft Teams, Google Chat",
     facts: ["Kudos and shout-outs become attributed testimonials", "Launch announcements date the timeline", "Read-only: never posts, never reacts"],
     doc: blob("reference/sources.md"),
-    fragment: "slack",
+    fragment: "chat",
   },
   {
-    name: "Figma",
+    name: "Design",
     color: "var(--color-apricot)",
     ink: "dark",
-    role: "The work itself",
-    facts: ["Discovers files through every other source", "Downloads key frames on demand at 2x", "Lists .fig files that need a manual local copy"],
+    role: "Figma, Penpot, Framer",
+    facts: ["Discovers files through every other source", "Downloads key frames on demand at 2x", "Lists files that need a manual local copy"],
     doc: blob("reference/figma.md"),
-    fragment: "figma",
+    fragment: "design",
   },
   {
-    name: "GitHub & Origin",
+    name: "Code",
     color: "var(--color-lilac)",
     ink: "dark",
-    role: "Shipping record",
+    role: "GitHub, GitLab, Bitbucket",
     facts: ["Repos ranked by commits, deduplicated by sha", "Notable merged pull requests and their reach", "First and last commit to date every project"],
     doc: blob("reference/sources.md"),
     fragment: "code",
   },
   {
-    name: "Miro",
+    name: "Whiteboards",
     color: "var(--color-olive)",
     ink: "dark",
-    role: "Thinking in public",
+    role: "Miro, FigJam, Mural",
     facts: ["Boards found by project names and links", "Frames rendered to clean proof screenshots", "Copied to any account or org, on request"],
     doc: blob("reference/exports.md"),
-    fragment: "miro",
+    fragment: "boards",
   },
   {
     name: "tasteskill",
@@ -105,35 +105,40 @@ export type Tech = { name: string; line: string; art: "harvest" | "localize" | "
 
 export const tech: Tech[] = [
   { name: "Harvest", line: "Parallel evidence collection across every source", art: "harvest" },
-  { name: "Localize", line: "Vibelab apps cloned, analyzed and made portable", art: "localize" },
+  { name: "Localize", line: "Deployed apps cloned, analyzed and made portable", art: "localize" },
   { name: "Capture", line: "Screenshots and screen-grab loops of live work", art: "capture" },
   { name: "Frame", line: "Stories with every claim tagged by confidence", art: "frame" },
   { name: "Taste", line: "A bespoke direction drawn from the person's craft", art: "taste" },
-  { name: "Export", line: "PDF, Miro board copies and Vibelab publishing", art: "export" },
+  { name: "Export", line: "PDF, whiteboard copies and publishing", art: "export" },
 ];
 
 export type Step = { title: string; body: string; log: string[] };
 
 export const steps: Step[] = [
   {
+    title: "Connect",
+    body: "It lists what your agent can reach, grouped by what each tool does, suggests what's worth adding, and asks where your company hosts apps.",
+    log: ["connected   docs · tracker · chat · design · code", "suggest     gh auth login  → commit history", "apps?       “our internal platform, CLI: acme-apps”", "  → 1 platform, read-only"],
+  },
+  {
     title: "Intake",
-    body: "One question: the email, the angle you want told, a style reference or none, and a time window.",
-    log: ["› brag center for jane.doe@miro.com", "  angle   promotion case for Staff", "  style   surprise me", "  window  last 2 years"],
+    body: "One question: the email, the angle you want told, a style reference or none, a time window, and an optional password.",
+    log: ["› brag center for jane@acme.com", "  angle   promotion case for Staff", "  style   surprise me", "  window  last 2 years"],
   },
   {
     title: "Identity",
-    body: "Glean returns who they are, where they sit, and the IDs every other source needs.",
-    log: ["employee_search jane.doe@miro.com", "  Staff Product Designer · Admin Experience", "  jira 624aa6a8…  slack U039YA…", "  discipline → design"],
+    body: "Whatever directory is connected returns who they are, where they sit, and the IDs every other source needs.",
+    log: ["people lookup jane@acme.com", "  Staff Product Designer · Admin Experience", "  jira 624aa6a8…  slack U039YA…", "  discipline → design"],
   },
   {
     title: "Harvest",
     body: "One subagent per source runs in parallel and writes its evidence with URLs, dates and role signals.",
-    log: ["evidence/glean.json        41 items", "evidence/jira.json         28 items", "evidence/slack.json        12 quotes", "evidence/figma.json         9 files"],
+    log: ["evidence/notion.json       41 items", "evidence/jira.json         28 items", "evidence/slack.json        12 quotes", "evidence/figma.json         9 files"],
   },
   {
-    title: "Vibelab",
-    body: "Every app they built is cloned, documented and smoke-run, so it still works outside Vibelab.",
-    log: ["vibelab-apps.sh → 18 candidates", "localize meet-log", "  vite · bun · sqlite · 11 env keys", "  smoke: works  → RUN-LOCALLY.md"],
+    title: "Apps",
+    body: "Every app they built is cloned, documented and smoke-run, so it still works outside the platform it lives on.",
+    log: ["app-candidates → 18 apps", "localize meet-log", "  vite · bun · sqlite · 11 env keys", "  smoke: works  → RUN-LOCALLY.md"],
   },
   {
     title: "Story",
@@ -142,7 +147,7 @@ export const steps: Step[] = [
   },
   {
     title: "Media",
-    body: "Live apps are recorded as loops, sources become proof screenshots, Figma frames come down at 2x.",
+    body: "Live apps are recorded as loops, sources become proof screenshots, design frames come down at 2x.",
     log: ["capture media-jobs.json  (your Chrome)", "  ✓ hero-bulk-actions.webm + poster", "  ✓ proof-epic-ADM-412.png", "  ✓ figma-bulk-select@2x.png"],
   },
   {
@@ -152,8 +157,8 @@ export const steps: Step[] = [
   },
   {
     title: "Handoff",
-    body: "A local site, a review file listing every embellishment, and optional PDF, Miro copies or Vibelab publish.",
-    log: ["→ http://localhost:5180", "REVIEW.md  4 embellished · 2 softened", "extras?  [PDF] [Miro copy] [Vibelab]", "done"],
+    body: "A local site, a review file listing every embellishment, and optional PDF, whiteboard copies or publishing.",
+    log: ["→ http://localhost:5180", "REVIEW.md  4 embellished · 2 softened", "extras?  [PDF] [Board copy] [Publish]", "done"],
   },
 ];
 

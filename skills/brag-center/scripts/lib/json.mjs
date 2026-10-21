@@ -3,7 +3,7 @@
 //   node json.mjs get <file> <.path> [<.path> ...]     first non-empty string/number at any path
 //   node json.mjs has-dep <package.json> <name>       exit 0 if listed in dependencies/devDependencies
 //   node json.mjs length <file>                       array length (0 if not an array)
-//   node json.mjs facts <commits-top.txt>             facts.json from F_* env vars (vibelab-localize.sh)
+//   node json.mjs facts <commits-top.txt>             facts.json from F_* env vars (app-localize.sh)
 import { readFileSync } from "node:fs";
 
 const [cmd, ...args] = process.argv.slice(2);
@@ -46,11 +46,12 @@ switch (cmd) {
       top = readFileSync(args[0], "utf8").split("\n").filter(Boolean);
     } catch {}
     const facts = {
-      app: e.F_APP, repo: e.F_REPO, liveUrl: e.F_LIVE_URL, vibelabStatus: e.F_STATUS, framework: e.F_FRAMEWORK,
+      app: e.F_APP, repo: e.F_REPO, repoUrl: e.F_REPO_URL, liveUrl: e.F_LIVE_URL ?? "", platform: e.F_PLATFORM,
+      platformStatus: e.F_STATUS, framework: e.F_FRAMEWORK,
       packageManager: e.F_PM, type: e.F_TYPE, rootDir: e.F_ROOT_DIR ?? "", build: e.F_BUILD ?? "", start: e.F_START ?? "",
       outDir: e.F_OUT_DIR, envKeys: words(e.F_ENV_KEYS), usesSqlite: e.F_SQLITE === "yes", readsPortEnv: e.F_PORT_ENV === "yes",
-      aiProxy: e.F_AI_PROXY, internalPackages: e.F_INTERNAL_PKGS === "yes",
-      hardcodedVibelabUrls: words(e.F_HARDCODED), vibelabIdentityHeaders: words(e.F_HEADERS),
+      aiEndpointFiles: words(e.F_AI_ENDPOINT), privateRegistries: words(e.F_REGISTRY), platformFiles: words(e.F_PLATFORM_FILES),
+      hardcodedPlatformUrls: words(e.F_HARDCODED), identityHeaderFiles: words(e.F_HEADERS),
       commits: { total: Number(e.F_COMMITS || 0), bySubject: Number(e.F_SUBJECT_COMMITS || 0), first: e.F_FIRST ?? "", last: e.F_LAST ?? "", top },
       readmeSummary: e.F_README ?? "", smoke: e.F_SMOKE, localDoc: `projects/${e.F_APP}/RUN-LOCALLY.md`,
     };

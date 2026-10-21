@@ -16,7 +16,8 @@ export type MediaItem = {
   height?: number;
   role?: "hero" | "gallery" | "detail";
 };
-export type ProofSource = "jira" | "confluence" | "figma" | "miro" | "vibelab" | "github" | "origin" | "slack" | "glean" | "other";
+/** Lowercase connector name, e.g. "jira", "notion", "figma", "github", "app". */
+export type ProofSource = string;
 export type Proof = { src: string; source: ProofSource; caption: string; url?: string; width?: number; height?: number };
 export type Project = {
   slug: string;
@@ -34,9 +35,9 @@ export type Project = {
   impact: (Metric | Claim)[];
   media?: MediaItem[];
   proof: Proof[];
-  vibelab?: { app?: string; liveUrl?: string; repo?: string; commits?: number; localDoc?: string; smoke?: string };
-  figma?: string[];
-  miro?: string[];
+  app?: { name?: string; platform?: string; liveUrl?: string; repo?: string; commits?: number; localDoc?: string; smoke?: string };
+  design?: string[];
+  boards?: string[];
   /** Teaser of a password-protected project: only slug, title, period, tags are real until unlocked. */
   locked?: boolean;
 };

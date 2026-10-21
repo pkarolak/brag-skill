@@ -2,6 +2,10 @@
 
 Generated {{DATE}} by brag-center. Read this before sending the site to anyone.
 
+## Connections
+
+<!-- Used: capability → tool. Missing: what to connect next time for a richer story. -->
+
 ## Password protection
 
 <!-- Scope only, never the password. e.g. "Case studies protected (home public). Share site/dist, not the dev server. PDF: protected with qpdf / NOT protected." -->
@@ -26,15 +30,15 @@ Sourced claims: {{SOURCED_COUNT}} (links in `story.json`).
 | File | Why | Action taken |
 |------|-----|--------------|
 
-## Vibelab apps
-| App | Live | Smoke | Local doc |
-|-----|------|-------|-----------|
+## Deployed apps
+| App | Platform | Live | Smoke | Local doc |
+|-----|----------|------|-------|-----------|
 
-## Figma
+## Design files
 - Downloaded: 
-- Manual "Save local copy" needed (`.fig` not downloadable):
+- Manual download needed (e.g. Figma `.fig` "Save local copy"):
 
-## Miro copies
+## Whiteboard copies
 | Source board | Target | Method | Frames | Skipped items | New board |
 |--------------|--------|--------|--------|---------------|-----------|
 

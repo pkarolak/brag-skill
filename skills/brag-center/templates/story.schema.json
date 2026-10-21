@@ -12,7 +12,7 @@
       "additionalProperties": false,
       "properties": {
         "url": { "type": "string" },
-        "type": { "enum": ["glean", "jira", "confluence", "slack", "figma", "miro", "vibelab", "github", "origin", "other"] },
+        "type": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "Lowercase connector name, e.g. jira, linear, confluence, notion, slack, figma, miro, github, gitlab, app, other" },
         "title": { "type": "string" },
         "date": { "type": "string" }
       }
@@ -68,7 +68,7 @@
       "additionalProperties": false,
       "properties": {
         "src": { "type": "string" },
-        "source": { "enum": ["jira", "confluence", "figma", "miro", "vibelab", "github", "origin", "slack", "glean", "other"] },
+        "source": { "type": "string", "pattern": "^[a-z0-9-]+$", "description": "Lowercase connector name, e.g. jira, linear, confluence, notion, slack, figma, miro, github, gitlab, app, other" },
         "caption": { "type": "string" },
         "url": { "type": "string" },
         "width": { "type": "integer" },
@@ -101,20 +101,22 @@
         "impact": { "type": "array", "minItems": 1, "items": { "anyOf": [{ "$ref": "#/$defs/metric" }, { "$ref": "#/$defs/claim" }] } },
         "media": { "type": "array", "items": { "$ref": "#/$defs/media" } },
         "proof": { "type": "array", "items": { "$ref": "#/$defs/proof" } },
-        "vibelab": {
+        "app": {
           "type": "object",
           "additionalProperties": false,
+          "description": "A deployed app behind this project (any hosting platform)",
           "properties": {
-            "app": { "type": "string" },
+            "name": { "type": "string" },
+            "platform": { "type": "string", "description": "Where it runs, e.g. Vercel or the org's internal platform" },
             "liveUrl": { "type": "string" },
             "repo": { "type": "string" },
             "commits": { "type": "integer" },
             "localDoc": { "type": "string", "description": "Relative path, e.g. projects/<app>/RUN-LOCALLY.md" },
-            "smoke": { "enum": ["works", "needs-secrets", "broken", "skipped"] }
+            "smoke": { "enum": ["works", "needs-secrets", "needs-registry-access", "broken", "skipped"] }
           }
         },
-        "figma": { "type": "array", "items": { "type": "string" }, "description": "Figma file/frame URLs" },
-        "miro": { "type": "array", "items": { "type": "string" }, "description": "Miro board URLs" }
+        "design": { "type": "array", "items": { "type": "string" }, "description": "Design file/frame URLs" },
+        "boards": { "type": "array", "items": { "type": "string" }, "description": "Whiteboard URLs" }
       }
     }
   },

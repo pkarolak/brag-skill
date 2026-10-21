@@ -30,9 +30,9 @@ export function CaseStudy({ project: p }: { project: Project }) {
         </p>
         <h1 className="mt-2 text-4xl leading-tight tracking-tight">{p.title.text}</h1>
         <p className="mt-4 max-w-2xl text-lg text-[var(--color-muted)]">{p.summary.text}</p>
-        {p.vibelab?.liveUrl ? (
+        {p.app?.liveUrl ? (
           <p className="mt-4 text-sm">
-            <ExternalLink href={p.vibelab.liveUrl}>Try it live</ExternalLink>
+            <ExternalLink href={p.app.liveUrl}>Try it live</ExternalLink>
           </p>
         ) : null}
       </header>
@@ -90,8 +90,8 @@ export function CaseStudy({ project: p }: { project: Project }) {
 
       <ProofGallery items={p.proof} classNames={{ root: "my-16", title: "mb-6 font-mono text-xs uppercase text-[var(--color-muted)]", meta: "mt-2 text-sm", label: "font-mono text-xs uppercase" }} />
 
-      {p.vibelab?.localDoc ? (
-        <p className="mt-8 text-sm text-[var(--color-muted)]">Runs outside Vibelab too: see {p.vibelab.localDoc}</p>
+      {p.app?.localDoc ? (
+        <p className="mt-8 text-sm text-[var(--color-muted)]">Runs locally too: see {p.app.localDoc}</p>
       ) : null}
 
       {!isPrint && next && next.slug !== p.slug ? (

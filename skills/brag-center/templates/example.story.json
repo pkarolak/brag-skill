@@ -12,10 +12,10 @@
   "hero": {
     "line": { "text": "Turns messy admin workflows into tools people actually enjoy.", "confidence": "embellished", "note": "Positioning line synthesized from project outcomes." },
     "kicker": "Portfolio · 2025–2026",
-    "bio": { "text": "Alex designs and prototypes admin tooling end to end, from discovery to live Vibelab prototypes used in customer calls.", "confidence": "inferred", "sources": [{ "url": "https://example.com/doc", "type": "glean" }] }
+    "bio": { "text": "Alex designs and prototypes admin tooling end to end, from discovery to live prototypes used in customer calls.", "confidence": "inferred", "sources": [{ "url": "https://example.com/doc", "type": "notion" }] }
   },
   "impact": [
-    { "value": "6", "label": "live prototypes shipped", "confidence": "sourced", "sources": [{ "url": "https://example.com/vibelab", "type": "vibelab" }] },
+    { "value": "6", "label": "live prototypes shipped", "confidence": "sourced", "sources": [{ "url": "https://bulk-actions.example.app/", "type": "app" }] },
     { "value": "~20%", "label": "faster bulk actions", "confidence": "inferred", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
     { "value": "3", "label": "teams adopted the patterns", "confidence": "sourced", "sources": [{ "url": "https://example.com/slack", "type": "slack" }] }
   ],
@@ -32,8 +32,8 @@
       "role": { "text": "Led design and built the working prototype used in customer sessions.", "confidence": "embellished", "note": "Upgraded from 'designed and prototyped'; prototype commits support lead role." },
       "moves": [
         { "text": "Mapped the top admin jobs from support tickets.", "confidence": "sourced", "sources": [{ "url": "https://example.com/research", "type": "confluence" }] },
-        { "text": "Prototyped on real data shapes in Vibelab instead of static mocks.", "confidence": "sourced", "sources": [{ "url": "https://example.com/vibelab", "type": "vibelab" }] },
-        { "text": "Ran five customer sessions with the live prototype.", "confidence": "inferred", "sources": [{ "url": "https://example.com/notes", "type": "glean" }] }
+        { "text": "Prototyped on real data shapes instead of static mocks.", "confidence": "sourced", "sources": [{ "url": "https://bulk-actions.example.app/", "type": "app" }] },
+        { "text": "Ran five customer sessions with the live prototype.", "confidence": "inferred", "sources": [{ "url": "https://example.com/notes", "type": "notion" }] }
       ],
       "outcome": { "text": "The pattern shipped to the admin console and became the table standard.", "confidence": "inferred", "sources": [{ "url": "https://example.com/slack", "type": "slack" }] },
       "impact": [
@@ -42,7 +42,7 @@
       ],
       "media": [],
       "proof": [],
-      "vibelab": { "app": "bulk-actions", "liveUrl": "https://example.com/vibelab", "commits": 31, "localDoc": "projects/bulk-actions/RUN-LOCALLY.md", "smoke": "works" }
+      "app": { "name": "bulk-actions", "platform": "Vercel", "liveUrl": "https://bulk-actions.example.app/", "commits": 31, "localDoc": "projects/bulk-actions/RUN-LOCALLY.md", "smoke": "works" }
     }
   ],
   "testimonials": [
