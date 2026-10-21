@@ -1,41 +1,49 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Product } from "../components/Product";
-import { PROMPT, portfolios } from "../content";
+import { INSTALL, PROMPT, portfolios } from "../content";
 
 const [spec, editorial, poster] = portfolios;
 
-/** What you type into your agent, typed out once the hero settles. */
-function Prompt() {
-  const reduced = useReducedMotion();
-  const [n, setN] = useState(reduced ? PROMPT.length : 0);
-  useEffect(() => {
-    if (reduced) return setN(PROMPT.length);
-    let i = 0;
-    let t: ReturnType<typeof setTimeout>;
-    const tick = () => {
-      i += 1;
-      setN(i);
-      if (i < PROMPT.length) t = setTimeout(tick, 38 + Math.random() * 40);
-    };
-    t = setTimeout(tick, 900);
-    return () => clearTimeout(t);
-  }, [reduced]);
-  const done = n >= PROMPT.length;
+/** The whole how-to in two lines: install once, then ask. Reads as reference, not as a button. */
+function Recipe() {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(INSTALL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      /* clipboard blocked: the command stays selectable */
+    }
+  };
+  const row = "grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 px-5 py-3.5 sm:grid-cols-[5.5rem_1fr_auto] sm:px-6";
 
   return (
-    <div data-ui className="flex h-14 w-[min(88vw,420px)] items-center gap-3 rounded-full bg-white pl-6 pr-2 text-left">
-      <span className="sr-only">Ask your agent: {PROMPT}</span>
-      <span aria-hidden className="min-w-0 flex-1 truncate text-[16px]">
-        {PROMPT.slice(0, n)}
-        {!done ? <span className="ml-px inline-block h-[1.1em] w-[1.5px] translate-y-[3px] bg-ink" /> : null}
-      </span>
-      <span aria-hidden className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors duration-300 ${done ? "bg-ink text-white" : "bg-mist text-ash"}`}>
-        <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" />
-        </svg>
-      </span>
-    </div>
+    <dl className="w-[min(90vw,540px)] divide-y divide-black/10 rounded-2xl border border-black/10 text-left">
+      <div className={row}>
+        <dt className="text-[14px] text-ash">Install</dt>
+        <dd className="order-3 col-span-2 min-w-0 sm:order-none sm:col-span-1">
+          <code className="block break-words font-mono text-[13px] sm:truncate sm:text-[14px]">{INSTALL}</code>
+        </dd>
+        <dd className="justify-self-end">
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={`Copy install command: ${INSTALL}`}
+            className="rounded-full px-2.5 py-1 text-[13px] text-ash underline-offset-4 transition-colors hover:text-ink hover:underline"
+          >
+            <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
+          </button>
+        </dd>
+      </div>
+      <div className={row}>
+        <dt className="col-span-2 text-[14px] text-ash sm:col-span-1">Then ask</dt>
+        <dd className="col-span-2 min-w-0">
+          <code className="block break-words font-mono text-[13px] sm:truncate sm:text-[14px]">{PROMPT}</code>
+        </dd>
+      </div>
+    </dl>
   );
 }
 
@@ -65,7 +73,7 @@ export function Hero() {
           </a>
         </motion.div>
         <motion.div {...rise(0.25)} className="mt-10">
-          <Prompt />
+          <Recipe />
         </motion.div>
 
         <motion.div style={{ y: lift }} className="mt-auto flex w-full items-end justify-center gap-[clamp(12px,2.4vw,40px)] pb-[clamp(40px,6vh,72px)] pt-10">
