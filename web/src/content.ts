@@ -5,10 +5,11 @@ export const INSTALL = "npx skills add pkarolak/brag-skill";
 export const PROMPT = "brag center for jane@acme.com";
 export const ADDONS_URL = `${REPO}#org-add-ons`;
 
-export const captions = [
-  "Reads whatever your agent is already connected to, and never blocks on what isn't.",
-  "Writes three to six outcome-first case studies, with the proof behind every claim.",
-  "Builds a one-off site in a style drawn from the person's craft, never a template.",
+export const flow = [
+  { title: "Ask", line: "Give your agent one email: yours, or a teammate's." },
+  { title: "Gather", line: "It reads the tickets, docs, designs, code and chat you've connected. Read-only." },
+  { title: "Review", line: "Every claim is tagged sourced, inferred or embellished. Nothing goes out until you approve." },
+  { title: "Share", line: "A one-off site in a style drawn from their craft, a PDF, or a password-protected link." },
 ];
 
 export type Source = {
