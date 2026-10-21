@@ -85,9 +85,9 @@ export const sources: Source[] = [
     name: "Whiteboards",
     color: "var(--color-olive)",
     ink: "dark",
-    role: "Miro, FigJam, Mural",
-    facts: ["Boards found by project names and links", "Frames rendered to clean proof screenshots", "Copied to any account or org, on request"],
-    doc: blob("reference/exports.md"),
+    role: "FigJam, Mural, Lucid, Excalidraw",
+    facts: ["Boards found by project names and links", "Frames rendered to clean proof screenshots", "Exported for your own records, on request"],
+    doc: blob("reference/sources.md"),
     fragment: "boards",
   },
   {
@@ -128,7 +128,7 @@ export const steps: Step[] = [
   {
     title: "Identity",
     body: "Whatever directory is connected returns who they are, where they sit, and the IDs every other source needs.",
-    log: ["people lookup jane@acme.com", "  Staff Product Designer · Admin Experience", "  jira 624aa6a8…  slack U039YA…", "  discipline → design"],
+    log: ["people lookup jane@acme.com", "  Staff Product Designer · Payments", "  jira 624aa6a8…  slack U039YA…", "  discipline → design"],
   },
   {
     title: "Harvest",
@@ -138,7 +138,7 @@ export const steps: Step[] = [
   {
     title: "Apps",
     body: "Every app they built is cloned, documented and smoke-run, so it still works outside the platform it lives on.",
-    log: ["app-candidates → 18 apps", "localize meet-log", "  vite · bun · sqlite · 11 env keys", "  smoke: works  → RUN-LOCALLY.md"],
+    log: ["app-candidates → 18 apps", "localize standup-bot", "  vite · bun · sqlite · 11 env keys", "  smoke: works  → RUN-LOCALLY.md"],
   },
   {
     title: "Story",
@@ -148,7 +148,7 @@ export const steps: Step[] = [
   {
     title: "Media",
     body: "Live apps are recorded as loops, sources become proof screenshots, design frames come down at 2x.",
-    log: ["capture media-jobs.json  (your Chrome)", "  ✓ hero-bulk-actions.webm + poster", "  ✓ proof-epic-ADM-412.png", "  ✓ figma-bulk-select@2x.png"],
+    log: ["capture media-jobs.json  (your Chrome)", "  ✓ hero-checkout.webm + poster", "  ✓ proof-epic-PAY-412.png", "  ✓ figma-checkout@2x.png"],
   },
   {
     title: "Direction",
@@ -174,7 +174,7 @@ export type Portfolio = {
 
 export const portfolios: Portfolio[] = [
   { kind: "Spec sheet", person: "Ines Varga", title: "Staff Platform Engineer", line: "Cut deploy time from 40 to 6 minutes", metric: "6 min", metricLabel: "p50 deploy", style: "spec" },
-  { kind: "Editorial", person: "Tom Achebe", title: "Senior Product Designer", line: "Made bulk board management a two-click job", metric: "~20%", metricLabel: "faster tasks", style: "editorial" },
+  { kind: "Editorial", person: "Tom Achebe", title: "Senior Product Designer", line: "Turned a five-step checkout into one page", metric: "~20%", metricLabel: "faster tasks", style: "editorial" },
   { kind: "Poster", person: "Mara Lind", title: "Brand Designer", line: "A launch nobody scrolled past", metric: "3.1M", metricLabel: "impressions", style: "poster" },
   { kind: "Field notes", person: "Ravi Iyer", title: "UX Researcher", line: "Forty interviews, one decision", metric: "40", metricLabel: "interviews", style: "field" },
   { kind: "Control room", person: "Kasia Nowak", title: "Program Manager", line: "Shipped the migration with zero downtime", metric: "0", metricLabel: "minutes down", style: "control" },

@@ -4,7 +4,7 @@ import { PROMPT, SKILL_PATH } from "../content";
 
 const side = [
   ["Every claim tagged", "sourced, inferred or embellished, with a review file listing each one before anything is shared."],
-  ["Read-only, always", "never pushes to a repo, never edits a board, never posts. Copies outside the org need your explicit yes."],
+  ["Read-only, always", "never pushes to a repo, never edits a doc, never posts. Copies outside the org need your explicit yes."],
 ];
 
 export function Install() {

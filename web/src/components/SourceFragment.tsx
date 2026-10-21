@@ -7,7 +7,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
     case "apps":
       return (
         <div className={`${panel} font-mono text-[12px] leading-[1.7]`}>
-          <div className="font-sans text-[13px] font-medium">RUN-LOCALLY.md — meet-log</div>
+          <div className="font-sans text-[13px] font-medium">RUN-LOCALLY.md — standup-bot</div>
           <div className="mt-2 text-black/60"># works outside the platform</div>
           <div>cp .env.local.example .env.local</div>
           <div>bun install && bun run dev</div>
@@ -26,7 +26,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-black font-serif text-[22px] italic text-white">J</div>
           <div className="min-w-0">
             <div className="font-medium">Jane Doe</div>
-            <div className="text-black/60">Staff Product Designer · Amsterdam</div>
+            <div className="text-black/60">Staff Product Designer · Lisbon</div>
             <div className="mt-1 truncate font-mono text-[11px] text-black/50">jira 624aa6a8… · slack U039YA…</div>
           </div>
         </div>
@@ -35,9 +35,9 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
       return (
         <div className={`${panel} space-y-2`}>
           {[
-            ["ADM-412", "Bulk board actions", "Done"],
-            ["ADM-388", "Admin search rebuild", "Done"],
-            ["ADM-455", "Audit log export", "In review"],
+            ["PAY-412", "One-page checkout", "Done"],
+            ["PAY-388", "Saved cards rebuild", "Done"],
+            ["PAY-455", "Self-serve refunds", "In review"],
           ].map(([k, t, s]) => (
             <div key={k} className="flex items-center gap-3">
               <span className="font-mono text-[11px] text-black/50">{k}</span>
@@ -52,9 +52,9 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
         <div className={panel}>
           <div className="flex items-baseline gap-2">
             <span className="font-medium">Priya S.</span>
-            <span className="text-[11px] text-black/45">#admin-launches · Mar 14</span>
+            <span className="text-[11px] text-black/45">#payments-launches · Mar 14</span>
           </div>
-          <p className="mt-1 leading-[1.45]">Huge kudos to Jane, bulk actions cut our support tickets for board cleanup in half 🙌</p>
+          <p className="mt-1 leading-[1.45]">Huge kudos to Jane, the new checkout cut drop-off at payment by a third 🙌</p>
           <div className="mt-2 flex gap-1.5 text-[11px]">
             <span className="rounded-full bg-black/[0.06] px-2 py-0.5">🎉 24</span>
             <span className="rounded-full bg-black/[0.06] px-2 py-0.5">💯 9</span>
@@ -64,7 +64,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
     case "design":
       return (
         <div className={`${panel} grid grid-cols-3 gap-2`}>
-          {["Bulk select", "Confirm", "Empty state"].map((n, i) => (
+          {["Cart", "Payment", "Receipt"].map((n, i) => (
             <div key={n}>
               <div className="aspect-[4/3] rounded-md bg-[#f1ece6] p-1.5">
                 <div className="h-1.5 w-1/2 rounded-full bg-black/70" />
@@ -99,7 +99,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           <div className="absolute left-3 top-3 h-[86px] w-[46%] rounded-md border border-black/15 p-2">
             <div className="text-[10px] text-black/50">Journey</div>
             <div className="mt-1 flex gap-1">
-              {["#ffe9a8", "#cfe8ff", "#ffd3d3"].map((c) => (
+              {["#cfe8ff", "#ffd3d3", "#d6f0dd"].map((c) => (
                 <div key={c} className="h-6 w-6 rounded-sm" style={{ background: c }} />
               ))}
             </div>

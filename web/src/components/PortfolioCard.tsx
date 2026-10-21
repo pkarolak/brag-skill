@@ -144,7 +144,7 @@ export function PortfolioCard({ p }: { p: Portfolio }) {
           <div className="text-[11px] opacity-80">{p.person} · {p.title}</div>
           <div className="mt-5 text-[30px] font-medium leading-[0.98] tracking-[-0.05em]">{p.line}</div>
           <div className="absolute bottom-6 left-6 right-6 h-[120px]">
-            <div className="absolute left-2 top-6 h-16 w-16 rotate-[-12deg] rounded-2xl bg-[#ffd400]" />
+            <div className="absolute left-2 top-6 h-16 w-16 rotate-[-12deg] rounded-2xl bg-[#7cf0c5]" />
             <div className="absolute left-20 top-0 h-20 w-20 rounded-full bg-[#ff5ad1]" />
             <div className="absolute right-4 top-8 h-14 w-24 rotate-[8deg] rounded-xl bg-white text-center text-[12px] leading-[56px] text-[#1a0fff]">drag me</div>
             <div className="absolute bottom-0 left-0 text-[11px] opacity-80">{p.metric} {p.metricLabel}</div>
