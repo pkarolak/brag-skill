@@ -38,6 +38,15 @@ function Recipe() {
         </dd>
       </div>
       <div className={row}>
+        <dt className="text-[14px] text-ash">Add context</dt>
+        <dd className="order-3 col-span-2 min-w-0 text-[15px] sm:order-none sm:col-span-1">Your company’s add-on, if it has one</dd>
+        <dd className="justify-self-end">
+          <a href="#addons" className="rounded-full px-2.5 py-1 text-[13px] text-ash underline-offset-4 transition-colors hover:text-ink hover:underline">
+            Learn how
+          </a>
+        </dd>
+      </div>
+      <div className={row}>
         <dt className="col-span-2 text-[14px] text-ash sm:col-span-1">Then ask</dt>
         <dd className="col-span-2 min-w-0">
           <code className="block break-words font-mono text-[13px] sm:truncate sm:text-[14px]">{PROMPT}</code>

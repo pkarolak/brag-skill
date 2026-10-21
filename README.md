@@ -42,6 +42,35 @@ Connections: none are required. At the start of a run the skill lists what's con
 
 Companies can make the skill feel native with a small companion skill named `brag-center-<org>`, installed next to it. Preflight finds it and the agent follows it alongside the main workflow. An add-on can pre-answer connections, plug in an adapter for the internal app platform (one that writes the normalized `apps.json`), add brand bans, and add stricter data rules. It can never relax the main guardrails. An add-on is just a `SKILL.md` plus any scripts it needs, and it can live in a private repo.
 
+### Create an add-on
+
+1. **Name the folder `brag-center-<org>`.** Preflight looks for `brag-center-*/SKILL.md` in every skills directory and prints what it found on the `ADDONS=` line. Any other name is ignored.
+2. **Write the frontmatter.** Set `disable-model-invocation: true` so the add-on is only read through Brag Center and never runs on its own, and say so in the `description`:
+
+   ```markdown
+   ---
+   name: brag-center-acme
+   description: Acme add-on for the brag-center skill. Pre-answers connections, adds the Acme app adapter and Acme rules. Read by brag-center's preflight; not used on its own.
+   disable-model-invocation: true
+   version: 1.0.0
+   ---
+   ```
+
+3. **Mirror Brag Center's step numbers.** Use headings like `## 2. Connections (pre-answered)` and `## 4. Identity (add)` so the agent knows where each instruction applies. Only write what differs at your company; everything else stays as the main workflow says. Refer to your own files with `ADDON_DIR` and to Brag Center's with `SKILL_DIR`.
+4. **Pre-answer what every run would otherwise ask:**
+   - **Connections:** a table of capability (directory, docs, tracker, chat, design, code, whiteboard, apps, calendar) to the tool your company uses, with site names or org names. The agent still checks what is actually connected.
+   - **Identity:** how to get from an email to tracker, chat and code accounts (for example, an employee directory that links profiles).
+   - **Apps:** if you have an internal app platform, add a script that lists apps and prints the normalized format from [`reference/apps.md`](skills/brag-center/reference/apps.md). The rest of the app pipeline then works unchanged.
+5. **Add rules, never remove them.** Brand bans (logo, colors, typefaces), where portfolios may be published, data classification, and anything that must never be captured. State that where the add-on and Brag Center disagree, the stricter rule wins.
+6. **Keep secrets out.** Point to where tokens already live (a CLI login, a config file the user owns) and send each credential only to its own host. Never put tokens in the add-on.
+7. **Share it privately.** Push it to an internal repo and tag releases (`npx skills` uses GitHub releases to offer updates). Teammates install it after the main skill:
+
+   ```bash
+   npx skills add <your-org>/brag-center-<org> -g
+   ```
+
+   Then run Brag Center once and check that preflight prints your add-on on the `ADDONS=` line.
+
 ## Use
 
 In your agent:
