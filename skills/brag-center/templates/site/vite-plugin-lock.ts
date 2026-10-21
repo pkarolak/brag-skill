@@ -1,8 +1,10 @@
 // Password protection for production builds.
 //
 // story.json `lock.scope` = "case-studies" | "site" turns it on; the password comes from BRAG_PASSWORD at build time
-// and is never written to disk. Protected content is AES-GCM encrypted with a PBKDF2-derived key, protected media
-// files are encrypted to media/locked/<id>.enc (names hidden), and the build fails if protected text leaks into dist.
+// and is never written to disk. Protected content is AES-GCM encrypted with a PBKDF2-derived key. Media referenced by
+// the protected part of story.json (and not by the public part) is encrypted to media/locked/<id>.enc (names hidden);
+// everything else in public/media, such as atmosphere photos used by the home page, ships as plain files.
+// The build fails if protected text leaks into dist.
 // `vite dev` with BRAG_PASSWORD seals the text too (media stay plain, dev is localhost only); without it, dev serves
 // the site unlocked under a visible "not password protected" banner.
 import { createHash, webcrypto } from "node:crypto";
@@ -102,10 +104,11 @@ export function bragLock(): Plugin {
 
       const { preview, sealed } = split(story, scope);
       const publicFiles = mediaRefs(preview);
+      const sealedFiles = mediaRefs(sealed);
       const files: Record<string, string> = {};
       for (const abs of isBuild ? walk(resolve(root, "public/media")) : []) {
         const rel = relative(resolve(root, "public"), abs).split("\\").join("/");
-        if (publicFiles.has(rel)) continue;
+        if (!sealedFiles.has(rel) || publicFiles.has(rel)) continue;
         files[rel] = `media/locked/${createHash("sha256").update(b64(salt) + rel).digest("hex").slice(0, 20)}.enc`;
       }
 
@@ -122,8 +125,11 @@ export function bragLock(): Plugin {
       })};`;
     },
     async closeBundle() {
-      if (!isBuild || !state) return;
+      if (!isBuild) return;
       const dist = resolve(root, "dist");
+      // capture.mjs leaves capture-results.json and <id>.webm.json in public/media; they hold local paths and source URLs
+      for (const f of walk(join(dist, "media")).filter((f) => f.endsWith(".json"))) rmSync(f);
+      if (!state) return;
       mkdirSync(join(dist, "media/locked"), { recursive: true });
       for (const [rel, enc] of Object.entries(state.files)) {
         const src = join(dist, rel);

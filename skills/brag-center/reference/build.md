@@ -57,6 +57,7 @@ On when `story.json` has `"lock": { "scope": "case-studies" | "site" }`. Product
 - `case-studies`: home stays public. Projects arrive as teasers (`p.locked === true`, real `slug`, `title`, `period`, `tags`; everything else empty) until unlocked; testimonials and timeline are sealed too. Render locked projects on home as title-only cards that link to their case study, which shows the lock. Don't put project details into public fields (hero, impact, skills) or the build fails its leak check.
 - `site`: everything is sealed; `App` shows only the `Lock` screen until unlocked.
 - Media: render every file through `Media`, `ProofGallery`, or the `useAsset(src)` hook. A plain `<img src={asset(...)}>` breaks once its file is encrypted.
+- Only media referenced by the protected part of `story.json` is encrypted. Decorative or atmosphere images named only in code (home page backdrops, textures) ship as plain files, so the public pages show them while locked. Never hardcode work screenshots in code; put them in `story.json` so they get protected.
 - `Lock.tsx` is a baseline: restyle it per `DESIGN.md` (it should feel like the site's front door), but keep `data-lock`, the `name="password"` input, and the `unlock()` call. Scripts use them.
 - AES-GCM-256 with a PBKDF2-SHA256 key (600k iterations); protected media is renamed to `media/locked/<hash>.enc`. The key is kept in `sessionStorage` for the tab, so navigation and reloads don't ask again; a new tab asks again.
 - Strength depends on the password: the bundle can be attacked offline, so recommend a passphrase.
