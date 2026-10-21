@@ -278,12 +278,28 @@ async function renderSvgs(files) {
   console.log(JSON.stringify(out, null, 2));
 }
 
+// Password-protected builds (vite-plugin-lock): fill the lock form with BRAG_PASSWORD. Returns true if a lock was shown.
+async function unlockIfNeeded(page) {
+  const lock = page.locator("[data-lock]");
+  if (!(await lock.count())) return false;
+  const password = process.env.BRAG_PASSWORD;
+  if (!password) throw new Error("site is password protected; set BRAG_PASSWORD to review it");
+  await page.fill('[data-lock] input[name="password"]', password);
+  await page.press('[data-lock] input[name="password"]', "Enter");
+  await lock.waitFor({ state: "detached", timeout: 30000 }).catch(() => {
+    throw new Error("unlock failed: wrong BRAG_PASSWORD?");
+  });
+  await page.waitForLoadState("networkidle").catch(() => {});
+  return true;
+}
+
 async function review(siteUrl) {
   mkdirSync(OUT, { recursive: true });
   const browser = await launchBrowser();
   const base = siteUrl.replace(/#.*$/, "");
   const probe = await browser.newPage();
   await probe.goto(base, { waitUntil: "networkidle" });
+  await unlockIfNeeded(probe);
   const routes = ["#/", ...new Set(await probe.$$eval('a[href^="#/"]', (as) => as.map((a) => a.getAttribute("href"))))];
   await probe.close();
   const sizes = { desktop: [1440, 900], mobile: [390, 844] };
@@ -296,6 +312,11 @@ async function review(siteUrl) {
     page.on("pageerror", (e) => consoleErrors.push(e.message));
     for (const r of routes) {
       await page.goto(base + r, { waitUntil: "networkidle" });
+      if (await page.locator("[data-lock]").count()) {
+        await page.screenshot({ path: join(OUT, `${label}-lock.png`) });
+        shots.push({ file: join(OUT, `${label}-lock.png`), route: r, viewport: label, lockScreen: true });
+        await unlockIfNeeded(page);
+      }
       await page.evaluate(async () => {
         for (let y = 0; y < document.body.scrollHeight; y += innerHeight / 2) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
         scrollTo(0, 0);

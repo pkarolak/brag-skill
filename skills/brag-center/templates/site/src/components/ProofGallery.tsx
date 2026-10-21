@@ -1,7 +1,12 @@
 import { useRef, useState } from "react";
 import type { Proof, ProofSource } from "../content/story";
-import { asset } from "../content/story";
+import { useAsset } from "../lib/lock";
 import { ExternalLink } from "./ExternalLink";
+
+function ProofImage({ src, ...rest }: { src: string } & Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src">) {
+  const url = useAsset(src);
+  return url ? <img src={url} {...rest} /> : null;
+}
 
 export const sourceLabel: Record<ProofSource, string> = {
   jira: "Jira",
@@ -44,7 +49,7 @@ export function ProofGallery({ items, title = "Behind the work", classNames: c =
           <li key={p.src} className={c.item}>
             <figure>
               <button type="button" onClick={() => show(p)} className="block w-full cursor-zoom-in text-left" aria-label={`Enlarge: ${p.caption}`}>
-                <img className={c.image ?? "w-full"} src={asset(p.src)} alt={p.caption} width={p.width} height={p.height} loading="lazy" decoding="async" />
+                <ProofImage className={c.image ?? "w-full"} src={p.src} alt={p.caption} width={p.width} height={p.height} loading="lazy" decoding="async" />
               </button>
               <figcaption className={c.meta}>
                 <span className={c.label}>{sourceLabel[p.source]}</span>{" "}
@@ -66,7 +71,7 @@ export function ProofGallery({ items, title = "Behind the work", classNames: c =
         onClick={() => dialog.current?.close()}
         onClose={() => setOpen(null)}
       >
-        {open ? <img src={asset(open.src)} alt={open.caption} className="max-h-[92vh] max-w-[92vw] object-contain" /> : null}
+        {open ? <ProofImage src={open.src} alt={open.caption} className="max-h-[92vh] max-w-[92vw] object-contain" /> : null}
       </dialog>
     </section>
   );

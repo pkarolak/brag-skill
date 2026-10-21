@@ -6,13 +6,15 @@ import { App } from "./App";
 import { isPrint } from "./lib/route";
 import { preparePrint } from "./lib/print";
 import { story } from "./content/story";
+import { resume } from "./lib/lock";
 
 document.title = `${story.person.name} — ${story.person.title}`;
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
-
-if (isPrint) requestAnimationFrame(() => setTimeout(preparePrint, 300));
+resume().finally(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+  if (isPrint) requestAnimationFrame(() => setTimeout(preparePrint, 300));
+});

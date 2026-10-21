@@ -196,6 +196,13 @@
         "fonts": { "type": "object", "additionalProperties": { "type": "string" } }
       }
     },
-    "missingSources": { "type": "array", "items": { "type": "string" } }
+    "missingSources": { "type": "array", "items": { "type": "string" } },
+    "lock": {
+      "type": "object",
+      "required": ["scope"],
+      "additionalProperties": false,
+      "description": "Password protection for production builds. The password is never stored here; pass it as BRAG_PASSWORD when building.",
+      "properties": { "scope": { "enum": ["case-studies", "site"] } }
+    }
   }
 }

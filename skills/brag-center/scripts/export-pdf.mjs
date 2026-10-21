@@ -6,8 +6,10 @@
 // Loads <siteUrl>?print=1[&project=<slug>], waits for window.__printReady (set by the site's print.ts),
 // emulates print media, and writes a PDF with backgrounds.
 import { launch } from "./lib/browser.mjs";
-import { mkdirSync, statSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 
 const argv = process.argv.slice(2);
 const opt = (name, fallback) => {
@@ -22,6 +24,7 @@ if (!siteUrl || argv.includes("--help")) {
 const project = opt("--project");
 const out = resolve(opt("--out", project ? `exports/${project}.pdf` : "exports/portfolio.pdf"));
 const format = opt("--format", "A4");
+const password = process.env.BRAG_PASSWORD;
 
 const url = new URL(siteUrl);
 url.hash = "";
@@ -35,6 +38,18 @@ page.on("pageerror", (e) => errors.push(e.message));
 
 await page.emulateMedia({ media: "print", reducedMotion: "reduce" });
 await page.goto(url.toString(), { waitUntil: "networkidle", timeout: 60000 });
+if (await page.locator("[data-lock]").count()) {
+  if (!password) {
+    console.error("error: site is password protected; set BRAG_PASSWORD (or export from the dev server)");
+    await browser.close();
+    process.exit(1);
+  }
+  await page.fill('[data-lock] input[name="password"]', password);
+  await page.press('[data-lock] input[name="password"]', "Enter");
+  await page.locator("[data-lock]").waitFor({ state: "detached", timeout: 30000 });
+  // Reload so print preparation runs on the unlocked content (the tab keeps the key in sessionStorage).
+  await page.reload({ waitUntil: "networkidle" });
+}
 const ready = await page
   .waitForFunction(() => window.__printReady === true, null, { timeout: 30000 })
   .then(() => true)
@@ -62,6 +77,23 @@ await page.pdf({
 });
 await browser.close();
 
+// With BRAG_PASSWORD, protect the PDF too (AES-256) when qpdf is available; never pass the password on argv.
+let protectedPdf = false;
+if (password) {
+  const qpdf = spawnSync("qpdf", ["--version"], { stdio: "ignore" }).status === 0;
+  if (qpdf) {
+    const dir = mkdtempSync(join(tmpdir(), "brag-pdf-"));
+    const args = join(dir, "args");
+    writeFileSync(args, ["--encrypt", password, password, "256", "--", out, "--replace-input"].join("\n"), { mode: 0o600 });
+    const r = spawnSync("qpdf", [`@${args}`], { stdio: "inherit" });
+    rmSync(dir, { recursive: true, force: true });
+    protectedPdf = r.status === 0 || r.status === 3;
+    if (!protectedPdf) console.error("warning: qpdf failed; the PDF is NOT password protected");
+  } else {
+    console.error("warning: qpdf not installed (brew install qpdf); the PDF is NOT password protected");
+  }
+}
+
 const kb = Math.round(statSync(out).size / 1024);
-console.log(JSON.stringify({ out, caseStudies, sizeKb: kb, pageErrors: errors }, null, 2));
+console.log(JSON.stringify({ out, caseStudies, sizeKb: kb, passwordProtected: protectedPdf, pageErrors: errors }, null, 2));
 if (errors.length) process.exitCode = 1;

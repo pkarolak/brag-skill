@@ -1,4 +1,5 @@
 // Baseline structure only. Each run rewrites the layout and styling from DESIGN.md + tasteskill.
+// Keep: locked projects (p.locked) render as title-only teasers that link to their case study (which shows the lock).
 import { motion } from "motion/react";
 import { formatDate, formatPeriod, heroMedia, story } from "../content/story";
 import { hrefFor } from "../lib/route";
@@ -37,7 +38,7 @@ export function Home() {
               {m ? <Media item={m} className="w-full" /> : null}
               <p className="mt-4 font-mono text-xs text-[var(--color-muted)]">{formatPeriod(p.period)}</p>
               <h2 className="mt-1 text-2xl group-hover:underline">{p.title.text}</h2>
-              <p className="mt-2 max-w-2xl text-[var(--color-muted)]">{p.summary.text}</p>
+              <p className="mt-2 max-w-2xl text-[var(--color-muted)]">{p.locked ? "Password protected" : p.summary.text}</p>
             </motion.a>
           );
         })}

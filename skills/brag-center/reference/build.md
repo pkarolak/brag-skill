@@ -15,6 +15,7 @@ Scaffold already provides (keep these, restyle freely):
 - `src/components/Media.tsx`: image / looping video with print poster swap
 - `src/components/ProofGallery.tsx`: proof grid + lightbox with `classNames` styling hooks
 - `src/components/ExternalLink.tsx`: external anchor with `data-href` for print footnotes
+- `vite-plugin-lock.ts`, `src/lib/lock.ts`, `src/components/Lock.tsx`: password protection (see below). `story.ts` reads content from `virtual:brag-story`, not the JSON file directly; keep that import.
 - `src/pages/Home.tsx`, `src/pages/CaseStudy.tsx`, `src/index.css`: neutral baseline structure. **Rewrite these completely** per `DESIGN.md`; they exist only so the scaffold builds and prints.
 
 Everything visual is written fresh per run. Chrome doesn't paint the ground color into `@page` margins: if the ground isn't white, set `@page { margin: 0 }` in print.css and pad the content blocks instead.
@@ -49,11 +50,22 @@ Case study (`#/work/<slug>`):
 - Lighthouse-sane: no layout shift from media, fonts with `font-display: swap`.
 - Dual theme only if `DESIGN.md` says so; otherwise commit to one.
 
+## Password protection
+
+On when `story.json` has `"lock": { "scope": "case-studies" | "site" }`. Production builds (`npm run build` with `BRAG_PASSWORD` set) encrypt the protected content and media; `npm run dev` is always unlocked.
+
+- `case-studies`: home stays public. Projects arrive as teasers (`p.locked === true`, real `slug`, `title`, `period`, `tags`; everything else empty) until unlocked; testimonials and timeline are sealed too. Render locked projects on home as title-only cards that link to their case study, which shows the lock. Don't put project details into public fields (hero, impact, skills) or the build fails its leak check.
+- `site`: everything is sealed; `App` shows only the `Lock` screen until unlocked.
+- Media: render every file through `Media`, `ProofGallery`, or the `useAsset(src)` hook. A plain `<img src={asset(...)}>` breaks once its file is encrypted.
+- `Lock.tsx` is a baseline: restyle it per `DESIGN.md` (it should feel like the site's front door), but keep `data-lock`, the `name="password"` input, and the `unlock()` call. Scripts use them.
+- AES-GCM-256 with a PBKDF2-SHA256 key (600k iterations); protected media is renamed to `media/locked/<hash>.enc`. The key is kept in `sessionStorage` for the tab, so navigation and reloads don't ask again; a new tab asks again.
+- Strength depends on the password: the bundle can be attacked offline, so recommend a passphrase.
+
 ## Commands
 
 ```bash
 cd site
 npm run dev -- --port 5180     # review + PDF export
-npm run build                  # static dist/ (for Vibelab or zip)
+npm run build                  # static dist/ (for Vibelab or zip); BRAG_PASSWORD='…' when story.json has lock
 npm run preview -- --port 5181
 ```

@@ -9,6 +9,7 @@ An agent skill that turns an employee's email into a bespoke, local portfolio si
 - **Media**: screenshots, screen-grab loops of live apps, Figma frame exports, and a "Behind the work" gallery of proof screenshots on every case study.
 - **Vibelab as source of truth**: the person's apps are cloned read-only, analyzed, smoke-run, and documented in `RUN-LOCALLY.md` so they run outside Vibelab.
 - **Design**: styled from a reference you give, or derived from the person's discipline, with [tasteskill](https://tasteskill.dev) as the anti-slop rulebook. Never Miro-branded.
+- **Password protection**: the skill asks whether to protect the case studies or the whole site, and for the password. Protected content and media are encrypted in the build (AES-GCM, PBKDF2 key), not just hidden; the password is never written to disk. PDFs get the same password when `qpdf` is installed.
 - **Extras**: PDF export, copying Miro boards into any account or org, optional Vibelab publish.
 
 ## Install

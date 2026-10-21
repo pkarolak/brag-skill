@@ -1,4 +1,4 @@
-import raw from "./story.json";
+import data from "virtual:brag-story";
 
 export type Confidence = "sourced" | "inferred" | "embellished";
 export type Claim = { text: string; confidence: Confidence };
@@ -37,6 +37,8 @@ export type Project = {
   vibelab?: { app?: string; liveUrl?: string; repo?: string; commits?: number; localDoc?: string; smoke?: string };
   figma?: string[];
   miro?: string[];
+  /** Teaser of a password-protected project: only slug, title, period, tags are real until unlocked. */
+  locked?: boolean;
 };
 export type Story = {
   angle?: string;
@@ -48,9 +50,14 @@ export type Story = {
   timeline?: { date: string; label: string; project?: string; url?: string }[];
   skills?: { name: string; evidence?: string }[];
   design: { concept: string; palette?: Record<string, string>; fonts?: Record<string, string> } & Record<string, unknown>;
+  lock?: { scope: "case-studies" | "site" };
 };
 
-export const story = raw as unknown as Story;
+/** Live binding: lib/lock.ts swaps in the decrypted story after unlock. */
+export let story = (data.locked ? data.preview : data.story) as unknown as Story;
+export function replaceStory(next: Story) {
+  story = next;
+}
 
 export const isMetric = (x: Metric | Claim): x is Metric => "value" in x;
 export const heroMedia = (p: Project) => p.media?.find((m) => m.role === "hero") ?? p.media?.[0];

@@ -2,6 +2,10 @@
 
 Generated {{DATE}} by brag-center. Read this before sending the site to anyone.
 
+## Password protection
+
+<!-- Scope only, never the password. e.g. "Case studies protected (home public). Share site/dist, not the dev server. PDF: protected with qpdf / NOT protected." -->
+
 ## Claims to verify
 
 ### Embellished
