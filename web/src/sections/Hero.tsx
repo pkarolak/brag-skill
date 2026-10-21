@@ -61,8 +61,7 @@ export function Hero() {
           Your best work, found and framed
         </motion.h1>
         <motion.p {...rise(0.1)} className="mt-6 max-w-[38ch] text-[clamp(18px,1.5vw,21px)] leading-[1.45]">
-          An agent skill that turns one email into a portfolio of case studies, for your promotion case, your next job, or a teammate who deserves the
-          credit.
+          Get a portfolio of your recent work for a promotion or your next job. For you and your peers: all it needs is an email address.
         </motion.p>
         <motion.div {...rise(0.2)} className="mt-9 flex flex-wrap justify-center gap-3">
           <a href="#install" className="btn btn-solid">
