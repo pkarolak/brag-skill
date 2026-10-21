@@ -1,3 +1,4 @@
+import { Mark } from "../components/Logo";
 import { Wordmark } from "../components/Nav";
 import { ADDONS_URL, REPO, SKILL_PATH, blob } from "../content";
 
@@ -50,8 +51,9 @@ export function Footer() {
         </div>
         <p className="mt-[clamp(64px,8vw,120px)] text-[15px] text-ash">Impressive, and mostly true. Runs locally and stays read-only toward every source.</p>
       </div>
-      <div aria-hidden className="mt-6 select-none overflow-hidden pb-[2vw] text-center leading-[0.9]">
-        <Wordmark className="whitespace-nowrap text-[8.6vw] tracking-[0.2em]" />
+      <div aria-hidden className="wrap mt-6 flex select-none items-center justify-center gap-[2.4vw] overflow-hidden pb-[2vw] leading-[0.9]">
+        <Mark className="h-[6.4vw] w-auto shrink-0" />
+        <Wordmark className="text-[7.4vw] tracking-[0.16em]" />
       </div>
     </footer>
   );

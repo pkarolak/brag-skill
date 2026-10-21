@@ -1,4 +1,5 @@
 import { REPO } from "../content";
+import { Mark } from "./Logo";
 
 const links = [
   ["Portfolios", "#portfolios"],
@@ -15,7 +16,8 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-40 bg-white">
       <nav className="wrap grid h-[72px] grid-cols-[1fr_auto] items-center gap-6 md:grid-cols-[1fr_auto_1fr]">
-        <a href="#top" aria-label="Brag Center home" className="justify-self-start">
+        <a href="#top" aria-label="Brag Center home" className="flex items-center gap-2.5 justify-self-start">
+          <Mark className="h-[22px] w-auto sm:h-6" />
           <Wordmark className="text-[14px] tracking-[0.18em] sm:text-[17px] sm:tracking-[0.24em]" />
         </a>
         <ul className="hidden items-center gap-9 text-[15px] md:flex">
