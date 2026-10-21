@@ -1,44 +1,46 @@
-import { REPO, SKILL_PATH, blob } from "../content";
+import { Wordmark } from "../components/Nav";
+import { ADDONS_URL, REPO, SKILL_PATH, blob } from "../content";
 
 const cols: { title: string; items: { label: string; href?: string }[] }[] = [
   {
     title: "Skill",
     items: [
       { label: "SKILL.md", href: SKILL_PATH },
+      { label: "Connections", href: blob("reference/connections.md") },
       { label: "Story schema", href: blob("templates/story.schema.json") },
-      { label: "Exports", href: blob("reference/exports.md") },
-      { label: "Source code", href: REPO },
+      { label: "Org add-ons", href: ADDONS_URL },
     ],
   },
   { title: "Works with", items: [{ label: "Cursor" }, { label: "Claude Code" }, { label: "Codex" }, { label: "Gemini CLI" }] },
-  { title: "Needs", items: [{ label: "Node 20+" }, { label: "Chrome or Edge" }, { label: "GitHub CLI" }, { label: "Your MCP connections" }] },
+  { title: "Needs", items: [{ label: "Node 20+" }, { label: "Chrome or Edge" }, { label: "Whatever you’ve connected" }] },
   {
     title: "Made with",
     items: [
       { label: "tasteskill.dev", href: "https://tasteskill.dev" },
       { label: "Playwright", href: "https://playwright.dev" },
       { label: "skills.sh", href: "https://skills.sh" },
+      { label: "Source on GitHub", href: REPO },
     ],
   },
 ];
 
 export function Footer() {
   return (
-    <footer className="overflow-hidden bg-ink pt-[clamp(72px,8vw,120px)]">
+    <footer className="overflow-hidden bg-mist pt-[clamp(72px,8vw,120px)]">
       <div className="wrap">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
           {cols.map((c) => (
             <div key={c.title}>
-              <h4 className="text-[14px] text-white/45">{c.title}</h4>
-              <ul className="mt-4 space-y-2.5 text-[16px]">
+              <h2 className="text-[16px] font-medium">{c.title}</h2>
+              <ul className="mt-4 space-y-2.5 text-[15px]">
                 {c.items.map((it) => (
                   <li key={it.label}>
                     {it.href ? (
-                      <a href={it.href} className="text-white/85 transition-colors hover:text-lime">
+                      <a href={it.href} className="underline-offset-4 hover:underline">
                         {it.label}
                       </a>
                     ) : (
-                      <span className="text-white/85">{it.label}</span>
+                      <span className="text-ash">{it.label}</span>
                     )}
                   </li>
                 ))}
@@ -46,15 +48,10 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <div className="mt-[clamp(72px,9vw,140px)] flex flex-wrap items-end justify-between gap-4 border-t border-white/15 pt-6 text-[15px] text-white/55">
-          <span>
-            Impressive. <span className="accent">Mostly true.</span>
-          </span>
-          <span>Runs locally. Read-only toward every source.</span>
-        </div>
+        <p className="mt-[clamp(64px,8vw,120px)] text-[15px] text-ash">Impressive, and mostly true. Runs locally and stays read-only toward every source.</p>
       </div>
-      <div aria-hidden className="mt-4 select-none whitespace-nowrap text-center text-[19.5vw] font-medium leading-[0.78] tracking-[-0.075em] text-white">
-        Brag Center
+      <div aria-hidden className="mt-6 select-none overflow-hidden pb-[2vw] text-center leading-[0.9]">
+        <Wordmark className="whitespace-nowrap text-[8.6vw] tracking-[0.2em]" />
       </div>
     </footer>
   );

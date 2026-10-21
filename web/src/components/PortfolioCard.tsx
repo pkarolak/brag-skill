@@ -7,13 +7,13 @@ export function PortfolioCard({ p }: { p: Portfolio }) {
     case "spec":
       return (
         <div data-ui className={`${shell} bg-[#0e1116] p-6 text-[#d7e2ee]`}>
-          <div className="flex items-center justify-between font-mono text-[11px] text-[#7d8ea3]">
+          <div className="flex items-center justify-between text-[11px] tabular-nums text-[#7d8ea3]">
             <span>{p.person}</span>
             <span>rev 2026.10</span>
           </div>
-          <div className="mt-8 font-mono text-[11px] text-[#5eead4]">{p.title}</div>
+          <div className="mt-8 text-[11px] font-medium uppercase tracking-[0.08em] text-[#5eead4]">{p.title}</div>
           <div className="mt-2 text-[26px] leading-[1.05] tracking-[-0.03em]">{p.line}</div>
-          <div className="absolute inset-x-6 bottom-6 grid grid-cols-2 gap-3 font-mono">
+          <div className="absolute inset-x-6 bottom-6 grid grid-cols-2 gap-3 tabular-nums">
             <div className="rounded-lg bg-[#161b22] p-3">
               <div className="text-[30px] leading-none text-[#5eead4]">{p.metric}</div>
               <div className="mt-1 text-[10px] text-[#7d8ea3]">{p.metricLabel}</div>

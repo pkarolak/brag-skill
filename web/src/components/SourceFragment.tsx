@@ -1,17 +1,15 @@
 import type { Source } from "../content";
 
-const panel = "rounded-2xl bg-white/80 p-4 text-[13px] text-black shadow-[0_1px_0_rgba(0,0,0,0.04)]";
+const panel = "rounded-2xl bg-white/80 p-4 text-[13px] text-black";
 
 export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
   switch (kind) {
     case "apps":
       return (
-        <div className={`${panel} font-mono text-[12px] leading-[1.7]`}>
-          <div className="font-sans text-[13px] font-medium">RUN-LOCALLY.md — standup-bot</div>
-          <div className="mt-2 text-black/60"># works outside the platform</div>
-          <div>cp .env.local.example .env.local</div>
-          <div>bun install && bun run dev</div>
-          <div className="mt-2 flex flex-wrap gap-1.5 font-sans">
+        <div data-ui className={`${panel} text-[12px] leading-[1.7]`}>
+          <div className="text-[13px] font-medium">RUN-LOCALLY.md — standup-bot</div>
+          <code className="mt-2 block whitespace-pre-wrap font-mono">{"# works outside the platform\ncp .env.local.example .env.local\nbun install && bun run dev"}</code>
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {["vite", "bun", "sqlite", "11 env keys", "smoke: works"].map((t) => (
               <span key={t} className={`rounded-full px-2 py-0.5 text-[11px] ${t === "smoke: works" ? "bg-black text-white" : "bg-black/[0.06]"}`}>
                 {t}
@@ -22,25 +20,25 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
       );
     case "people":
       return (
-        <div className={`${panel} flex items-center gap-4`}>
+        <div data-ui className={`${panel} flex items-center gap-4`}>
           <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-black font-serif text-[22px] italic text-white">J</div>
           <div className="min-w-0">
             <div className="font-medium">Jane Doe</div>
             <div className="text-black/60">Staff Product Designer · Lisbon</div>
-            <div className="mt-1 truncate font-mono text-[11px] text-black/50">jira 624aa6a8… · slack U039YA…</div>
+            <div className="mt-1 truncate text-[11px] tabular-nums text-black/50">jira 624aa6a8… · slack U039YA…</div>
           </div>
         </div>
       );
     case "work":
       return (
-        <div className={`${panel} space-y-2`}>
+        <div data-ui className={`${panel} space-y-2`}>
           {[
             ["PAY-412", "One-page checkout", "Done"],
             ["PAY-388", "Saved cards rebuild", "Done"],
             ["PAY-455", "Self-serve refunds", "In review"],
           ].map(([k, t, s]) => (
             <div key={k} className="flex items-center gap-3">
-              <span className="font-mono text-[11px] text-black/50">{k}</span>
+              <span className="text-[11px] tabular-nums text-black/50">{k}</span>
               <span className="flex-1 truncate">{t}</span>
               <span className={`rounded-full px-2 py-0.5 text-[11px] ${s === "Done" ? "bg-[#d3f5d1]" : "bg-black/[0.06]"}`}>{s}</span>
             </div>
@@ -49,21 +47,21 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
       );
     case "chat":
       return (
-        <div className={panel}>
+        <div data-ui className={panel}>
           <div className="flex items-baseline gap-2">
             <span className="font-medium">Priya S.</span>
             <span className="text-[11px] text-black/45">#payments-launches · Mar 14</span>
           </div>
-          <p className="mt-1 leading-[1.45]">Huge kudos to Jane, the new checkout cut drop-off at payment by a third 🙌</p>
+          <p className="mt-1 leading-[1.45]">Huge kudos to Jane, the new checkout cut drop-off at payment by a third</p>
           <div className="mt-2 flex gap-1.5 text-[11px]">
-            <span className="rounded-full bg-black/[0.06] px-2 py-0.5">🎉 24</span>
-            <span className="rounded-full bg-black/[0.06] px-2 py-0.5">💯 9</span>
+            <span className="rounded-full bg-black/[0.06] px-2 py-0.5">24 reactions</span>
+            <span className="rounded-full bg-black/[0.06] px-2 py-0.5">9 replies</span>
           </div>
         </div>
       );
     case "design":
       return (
-        <div className={`${panel} grid grid-cols-3 gap-2`}>
+        <div data-ui className={`${panel} grid grid-cols-3 gap-2`}>
           {["Cart", "Payment", "Receipt"].map((n, i) => (
             <div key={n}>
               <div className="aspect-[4/3] rounded-md bg-[#f1ece6] p-1.5">
@@ -81,7 +79,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
       );
     case "code":
       return (
-        <div className={panel}>
+        <div data-ui className={panel}>
           <div className="flex items-end gap-[3px]" aria-hidden>
             {[2, 4, 3, 6, 8, 5, 9, 12, 7, 10, 14, 11, 6, 9, 13, 16, 12, 8, 10, 15].map((h, i) => (
               <div key={i} className="flex-1 rounded-[2px] bg-[#6b54d6]" style={{ height: h * 3.4, opacity: 0.35 + h / 26 }} />
@@ -95,7 +93,7 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
       );
     case "boards":
       return (
-        <div className={`${panel} relative h-[118px] overflow-hidden bg-[#fbfbf6]`}>
+        <div data-ui className={`${panel} relative h-[118px] overflow-hidden bg-[#fbfbf6]`}>
           <div className="absolute left-3 top-3 h-[86px] w-[46%] rounded-md border border-black/15 p-2">
             <div className="text-[10px] text-black/50">Journey</div>
             <div className="mt-1 flex gap-1">
@@ -109,14 +107,14 @@ export function SourceFragment({ kind }: { kind: Source["fragment"] }) {
           </svg>
           <div className="absolute right-3 top-3 h-[86px] w-[34%] rounded-md bg-black p-2 text-[10px] text-white">
             copied to
-            <div className="mt-1 font-serif text-[15px] italic leading-tight text-lime">Jane’s account</div>
+            <div className="mt-1 font-serif text-[15px] italic leading-tight text-white">Jane’s account</div>
           </div>
         </div>
       );
     case "taste":
       return (
-        <div className={`${panel} font-mono text-[12px] leading-[1.7]`}>
-          <div className="font-sans text-[13px] font-medium">DESIGN.md</div>
+        <div data-ui className={`${panel} text-[12px] leading-[1.7]`}>
+          <div className="text-[13px] font-medium">DESIGN.md</div>
           <div><span className="text-black/45">concept</span> an editorial magazine of shipped work</div>
           <div><span className="text-black/45">type</span> display serif, clean sans</div>
           <div className="flex items-center gap-2">

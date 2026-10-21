@@ -1,68 +1,44 @@
-import { motion, useReducedMotion } from "motion/react";
 import { Reveal } from "../components/Reveal";
 import { SourceFragment } from "../components/SourceFragment";
 import { sources } from "../content";
 
 export function Sources() {
-  const reduced = useReducedMotion();
   return (
-    <section id="sources" className="bg-paper py-[clamp(88px,10vw,150px)] text-ink">
+    <section id="sources" aria-labelledby="sources-title" className="bg-mist py-[clamp(96px,12vw,200px)]">
       <div className="wrap">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div className="grid gap-6 md:grid-cols-2 md:items-end">
           <Reveal>
-            <h2 className="display text-[clamp(52px,7vw,104px)]">
-              Whatever’s connected.
-              <br />
-              <span className="font-serif italic tracking-[-0.02em]">One story.</span>
+            <h2 id="sources-title" className="h-display max-w-[12ch] text-[clamp(44px,6vw,88px)]">
+              Works with what you have
             </h2>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="max-w-[34ch] text-[18px] leading-[1.45] text-black/65">
-              Tools are read by what they do, not what they’re called. Every connection your agent has works; missing ones get a suggestion, never a blocker. Apps lead, because a working app is the best proof there is.
+          <Reveal delay={0.08}>
+            <p className="max-w-[40ch] text-[18px] leading-[1.55] md:justify-self-end">
+              Tools are read by what they do, not what they’re called. Every connection your agent has is used; missing ones get a suggestion, never a blocker.
             </p>
           </Reveal>
         </div>
 
-        <div className="mt-14 grid gap-4 md:grid-cols-2">
+        <ul className="mt-[clamp(48px,6vw,88px)] grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {sources.map((s, i) => (
-            <motion.article
-              key={s.name}
-              className="flex flex-col rounded-[32px] p-7 sm:p-9"
-              style={{ background: s.color, color: s.ink === "light" ? "#fff" : "#000" }}
-              initial={reduced ? false : { opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 0.8, delay: (i % 2) * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
-              whileHover={reduced ? undefined : { y: -4 }}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-[clamp(34px,3.4vw,48px)] leading-none tracking-[-0.05em]">{s.name}</h3>
-                  <p className="mt-2 text-[16px] opacity-70">{s.role}</p>
+            <Reveal as="li" key={s.name} delay={(i % 4) * 0.06} className="flex flex-col rounded-[28px] bg-white p-5 transition-transform hover:-translate-y-1">
+              <div className="flex min-h-[176px] items-center">
+                <div className="w-full">
+                  <SourceFragment kind={s.fragment} />
                 </div>
-                <a
-                  href={s.doc}
-                  className={`shrink-0 rounded-full border px-4 py-2 text-[14px] transition-colors ${
-                    s.ink === "light" ? "border-white/40 hover:bg-white hover:text-black" : "border-black/25 hover:bg-black hover:text-white"
-                  }`}
-                >
-                  {s.fragment === "taste" ? "tasteskill.dev ↗" : "Read the playbook ↗"}
-                </a>
               </div>
-              <ul className="mt-8 space-y-2.5 text-[16px] leading-[1.4]">
-                {s.facts.map((f) => (
-                  <li key={f} className="flex gap-3">
-                    <span aria-hidden className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-60" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto pt-8">
-                <SourceFragment kind={s.fragment} />
-              </div>
-            </motion.article>
+              <h3 className="mt-6 text-[22px] font-medium tracking-[-0.01em]">{s.name}</h3>
+              <p className="mt-1 text-[15px] text-ash">{s.examples}</p>
+              <p className="mt-3 text-[16px] leading-[1.5]">{s.line}</p>
+              <a href={s.doc} className="group mt-auto inline-flex items-center gap-2 pt-5 text-[15px] font-medium">
+                {s.fragment === "taste" ? "tasteskill.dev" : "Read the playbook"}
+                <svg viewBox="0 0 16 16" className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+                  <path d="M2 8h11M9 4l4 4-4 4" />
+                </svg>
+              </a>
+            </Reveal>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

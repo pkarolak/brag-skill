@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "@fontsource/instrument-sans/400.css";
-import "@fontsource/instrument-sans/500.css";
+import "@fontsource-variable/figtree";
 import "@fontsource/instrument-serif/400.css";
 import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource/fragment-mono/400.css";
