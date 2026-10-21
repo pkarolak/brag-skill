@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Match normalized app records (evidence/apps.json) to a person by owner fields and commit authorship.
 //
-//   node app-candidates.mjs <apps.json> --email <email> [--repos repos.json] [--keep-unowned]
+//   node app-candidates.mjs <apps.json> --email <email> [--login <username>] [--repos repos.json] [--keep-unowned]
 //
-// apps.json: [{ "name", "url", "platform", "owner"?, "repo"?, "status"?, "meta"? }]
+// apps.json: [{ "name", "url", "platform", "owner"?, "contributors"?: [], "repo"?, "status"?, "meta"? }]
 // repos.json: output of repos-by-author.sh ([{ "repo", "commits", "first", "last" }])
+// --login: the person's username on the platform or code host (owner fields are often logins, not emails).
 // --keep-unowned: keep records with no owner field (use when the user supplied the list themselves).
 import { readFileSync } from "node:fs";
 
@@ -16,7 +17,7 @@ const opt = (k) => {
 const appsFile = args[0];
 const email = opt("--email");
 if (!appsFile || !email) {
-  console.error("usage: app-candidates.mjs <apps.json> --email <email> [--repos repos.json] [--keep-unowned]");
+  console.error("usage: app-candidates.mjs <apps.json> --email <email> [--login <username>] [--repos repos.json] [--keep-unowned]");
   process.exit(2);
 }
 const readJson = (f) => {
@@ -35,6 +36,7 @@ const keepUnowned = args.includes("--keep-unowned");
 const lc = (s) => String(s ?? "").toLowerCase();
 const mail = lc(email);
 const local = mail.split("@")[0];
+const login = opt("--login") ? lc(opt("--login")) : null;
 const repoKey = (r) =>
   lc(r)
     .replace(/^(https?:\/\/|git@)[^/:]+[/:]/, "")
@@ -42,10 +44,10 @@ const repoKey = (r) =>
     .replace(/\/$/, "");
 const short = (r) => repoKey(r).split("/").pop();
 const owners = (a) =>
-  [a.owner, a.owner_email, a.ownerEmail, a.created_by, a.createdBy, a.author, a.user?.email, a.user?.login, a.owner?.email, a.owner?.login]
+  [a.owner, a.owner_email, a.ownerEmail, a.created_by, a.createdBy, a.author, a.lead, a.user?.email, a.user?.login, a.owner?.email, a.owner?.login]
     .filter((v) => typeof v === "string")
     .map(lc);
-const isMine = (s) => s === mail || s === local || s.startsWith(`${local}@`);
+const isMine = (s) => s === mail || s === local || s.startsWith(`${local}@`) || (login !== null && s === login);
 
 const out = [];
 for (const a of apps) {
@@ -54,6 +56,7 @@ for (const a of apps) {
   const commit = a.repo ? repos.find((r) => repoKey(r.repo) === repoKey(a.repo)) : repos.find((r) => short(r.repo) === lc(a.name));
   const match = [];
   if (os.some(isMine)) match.push("owner");
+  else if ((a.contributors ?? []).map(lc).some(isMine)) match.push("contributor");
   if (commit) match.push("commits");
   if (!match.length && !os.length && keepUnowned) match.push("listed");
   if (!match.length) continue;

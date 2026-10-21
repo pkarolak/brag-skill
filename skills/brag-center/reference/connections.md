@@ -4,6 +4,8 @@ The skill works with whatever the agent is connected to. Nothing is required exc
 
 ## 1. Discover
 
+If an org add-on is loaded (preflight `ADDONS`), start from its connector map and app-platform answer, and skip questions it already answers. Still discover: the user may have more connected.
+
 List every tool the agent can call right now:
 
 - MCP servers / tool namespaces (Cursor: `GetDynamicTools` with no args; other agents: the tool list in context).

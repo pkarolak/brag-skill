@@ -42,6 +42,7 @@ It installs only the skill's own npm packages (`playwright-core`, `ajv`, ~16 MB 
 - `BROWSER=chrome|msedge|…`: scripts drive that browser; nothing to download. `BROWSER=none`: ask once — install Chrome, or rerun with `--install browser` (Playwright Chromium, ~300 MB). If declined, take screenshots and review shots with `AGENT_BROWSER_TOOL` and skip loops and PDF.
 - `TASTESKILL=<path>`: use it. `none`: ask once whether to add it for this agent (`--install taste`, global skill); if declined, use the fallback checklist in [reference/art-direction.md](reference/art-direction.md).
 - `FFMPEG=no` means the install failed: loops stay webm (see step 7). `GIT=missing`: skip app clones. `GH` not `ok`: GitHub code search falls back to a code MCP if one is connected. `CLIS` lists code-host and app-platform CLIs already on the machine; feed them into step 2.
+- `ADDONS=<paths>`: org add-ons (companion skills named `brag-center-<org>`). Read each one now and follow it alongside this file: it can pre-answer connections and the app platform, name scripts of its own, and add org rules. Add-ons may add restrictions but never relax the Guardrails below.
 
 Ask both questions (browser, tasteskill) in one `AskQuestion`, only for what's missing.
 

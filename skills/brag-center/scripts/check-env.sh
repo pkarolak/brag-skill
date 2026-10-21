@@ -8,7 +8,7 @@
 #   --install taste     add tasteskill for the detected agent (global skill) — only with the user's consent
 #   --no-install        don't install the skill's npm packages or ffmpeg
 #
-# Ends with KEY=VALUE lines (AGENT, BROWSER, TASTESKILL, FFMPEG, GH, GIT, CLIS, AGENT_BROWSER_TOOL) for the agent to read.
+# Ends with KEY=VALUE lines (AGENT, BROWSER, TASTESKILL, FFMPEG, GH, GIT, CLIS, ADDONS, AGENT_BROWSER_TOOL) for the agent to read.
 set -uo pipefail
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -135,6 +135,15 @@ fi
 if [ -n "$TASTE" ]; then ok "tasteskill: $TASTE"
 else info "tasteskill not installed — ask the user once (--install taste), otherwise use the fallback checklist in reference/art-direction.md"; fi
 
+# Org add-ons: companion skills named brag-center-<org> that pre-answer connections and add org rules
+ADDONS=""
+for d in $ALL_SKILL_DIRS; do
+  for f in "$d"/brag-center-*/SKILL.md; do
+    [ -f "$f" ] || continue
+    real="$(cd "$(dirname "$f")" && pwd -P)/SKILL.md"
+    case ",$ADDONS," in *",$real,"*) ;; *) ADDONS="$ADDONS${ADDONS:+,}$real"; ok "org add-on: $real" ;; esac
+  done
+done
 
 echo
 echo "AGENT=$AGENT"
@@ -144,6 +153,7 @@ echo "FFMPEG=$FFMPEG"
 echo "GH=$GH"
 echo "GIT=$GIT"
 echo "CLIS=${CLIS:-none}"
+echo "ADDONS=${ADDONS:-none}"
 echo "AGENT_BROWSER_TOOL=$AGENT_BROWSER"
 echo
 [ "$FAILED" = 0 ] && echo "preflight: OK" || { echo "preflight: FAILED (fix the FAIL lines above)"; exit 1; }

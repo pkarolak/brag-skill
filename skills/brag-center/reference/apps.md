@@ -28,11 +28,11 @@ Platform tips (examples):
 
 ```bash
 bash "$SKILL_DIR/scripts/repos-by-author.sh" "<email>" [--login <gh-login>] [--orgs <org1,org2>] [--since <YYYY-MM-DD>] > evidence/repos.json
-node "$SKILL_DIR/scripts/app-candidates.mjs" evidence/apps.json --email "<email>" --repos evidence/repos.json [--keep-unowned] > evidence/app-candidates.json
+node "$SKILL_DIR/scripts/app-candidates.mjs" evidence/apps.json --email "<email>" [--login <username>] --repos evidence/repos.json [--keep-unowned] > evidence/app-candidates.json
 ```
 
 - `repos-by-author.sh` uses `gh` commit search (GitHub only). For GitLab/Bitbucket/other hosts, use their MCP/CLI and write the same `[{repo, commits, first, last}]` shape.
-- Matching: owner fields equal to the email or its local part, then repos with commits by the person. `--keep-unowned` keeps records without owner info (use it when the user pasted the list).
+- Matching: owner fields equal to the email, its local part, or `--login` (many platforms store usernames), then `contributors[]`, then repos with commits by the person. `--keep-unowned` keeps records without owner info (use it when the user pasted the list).
 - If commit search returns nothing, ask for the person's GitHub login and rerun with `--login`.
 
 Show candidates (name, live URL, platform, match reason, commit count) in one multi-select `AskQuestion`; preselect all.

@@ -38,6 +38,10 @@ Defaults adapt to the agent running the skill (Cursor, Claude Code, Codex, Gemin
 
 Connections: none are required. At the start of a run the skill lists what's connected, grouped by capability, and suggests the most useful additions for the person's discipline. For example, an enterprise search MCP covers directory, docs, and chat at once, and `gh auth login` adds commit history. It also asks whether your company hosts apps somewhere and how to reach them: an MCP or skill, a CLI, an API with a token location, a list page, or just pasted URLs. Missing sources are skipped and listed in the review file.
 
+## Org add-ons
+
+Companies can make the skill feel native with a small companion skill named `brag-center-<org>`, installed next to it. Preflight finds it and the agent follows it alongside the main workflow. An add-on can pre-answer connections, plug in an adapter for the internal app platform (one that writes the normalized `apps.json`), add brand bans, and add stricter data rules. It can never relax the main guardrails. An add-on is just a `SKILL.md` plus any scripts it needs, and it can live in a private repo.
+
 ## Use
 
 In your agent:
